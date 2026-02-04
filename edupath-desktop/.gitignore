@@ -1,0 +1,26 @@
+# Build outputs
+bin/
+obj/
+build/
+dist/
+out/
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Dependencies
+node_modules/
+packages/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db

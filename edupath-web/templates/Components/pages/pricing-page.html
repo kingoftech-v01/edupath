@@ -1,0 +1,27 @@
+{% for item in pages %}
+<div class="{{ item.style }}">
+    <div class="md:w-36">
+        <h3 class="text-xl text-violet-600 font-semibold">{{ item.name }}</h3>
+
+        <div class="flex mt-3">
+            <span class="text-lg">$</span>
+            <span class="text-2xl font-semibold">{{ item.price }}</span>
+            <span class="text-lg self-end">/ {{ item.duration }}</span>
+        </div>
+    </div>
+
+    <ul class="list-none">
+        <li class="text-slate-400 mt-2"><span class="text-violet-600 text-lg me-2"><i class="iconoir-check-circle align-middle"></i></span>Full Access</li>
+        <li class="text-slate-400 mt-2"><span class="text-violet-600 text-lg me-2"><i class="iconoir-check-circle align-middle"></i></span>Source Files</li>
+    </ul>
+
+    <ul class="list-none">
+        <li class="text-slate-400 mt-2"><span class="text-violet-600 text-lg me-2"><i class="iconoir-check-circle align-middle"></i></span>Free Appointments</li>
+        <li class="text-slate-400 mt-2"><span class="text-violet-600 text-lg me-2"><i class="iconoir-check-circle align-middle"></i></span>Enhanced Security</li>
+    </ul>
+
+    <div class="md:w-36 md:text-end">
+        <a href="" class="{{ item.button_style }}">{{ item.button_text }}</a>
+    </div>
+</div><!--end content-->
+{% endfor %}

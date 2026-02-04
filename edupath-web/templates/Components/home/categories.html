@@ -1,0 +1,12 @@
+{% for item in categories %}
+<div class="group flex items-center bg-white hover:bg-gradient-to-tr hover:to-violet-600 hover:from-fuchsia-600 dark:bg-slate-900 rounded-md shadow shadow-slate-200 dark:shadow-slate-800 duration-500 p-5">
+    <div class="size-12 bg-violet-600/5 group-hover:bg-white/20 text-violet-600 group-hover:text-white rounded-md flex align-middle justify-center items-center shadow-sm">
+        <i class="{{ item.icon }}"></i>
+    </div>
+
+    <div class="content ms-3">
+        <a href="" class="title text-lg font-semibold group-hover:text-white">{{ item.name }}</a>
+        <p class="text-slate-400 group-hover:text-white/50">{{ item.title }}</p>
+    </div>
+</div><!--end content-->
+{% endfor %}

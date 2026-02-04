@@ -1,0 +1,300 @@
+/* EduPath Desktop Theme - Dark Mode */
+
+/* Global Styles */
+QWidget {
+    background-color: #1a1a2e;
+    color: #eaeaea;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+}
+
+/* Sidebar */
+#sidebar {
+    background-color: #16213e;
+    border-right: 1px solid #0f3460;
+}
+
+#logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #8b5cf6;
+    padding: 20px;
+}
+
+#nav_button {
+    background-color: transparent;
+    border: none;
+    padding: 15px 20px;
+    text-align: left;
+    color: #9ca3af;
+}
+
+#nav_button:hover {
+    background-color: #0f3460;
+    color: #ffffff;
+}
+
+#logout_button {
+    background-color: #dc2626;
+    border: none;
+    padding: 12px 20px;
+    margin: 10px;
+    border-radius: 6px;
+    color: white;
+}
+
+#logout_button:hover {
+    background-color: #b91c1c;
+}
+
+/* Login Card */
+#login_card {
+    background-color: #16213e;
+    border-radius: 12px;
+    border: 1px solid #0f3460;
+}
+
+#login_title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+#login_subtitle {
+    color: #9ca3af;
+}
+
+#login_input {
+    background-color: #0f3460;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    padding: 12px;
+    color: #ffffff;
+}
+
+#login_input:focus {
+    border-color: #8b5cf6;
+}
+
+#login_button {
+    background-color: #8b5cf6;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    color: white;
+    font-weight: bold;
+}
+
+#login_button:hover {
+    background-color: #7c3aed;
+}
+
+#error_label {
+    color: #ef4444;
+}
+
+/* Dashboard */
+#dashboard_title {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#dashboard_subtitle {
+    color: #9ca3af;
+}
+
+#stat_card {
+    background-color: #16213e;
+    border-radius: 8px;
+    padding: 20px;
+    min-width: 150px;
+}
+
+#stat_value {
+    font-size: 32px;
+    font-weight: bold;
+    color: #8b5cf6;
+}
+
+#stat_title {
+    color: #9ca3af;
+}
+
+#section_title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Course Card */
+#course_card {
+    background-color: #16213e;
+    border-radius: 12px;
+    border: 1px solid #0f3460;
+}
+
+#course_card:hover {
+    border-color: #8b5cf6;
+}
+
+#course_image {
+    background-color: #0f3460;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+#course_content {
+    padding: 15px;
+}
+
+#course_category_badge {
+    background-color: #8b5cf6;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+#course_card_title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#course_card_instructor {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+#course_stat {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+#course_price_badge {
+    color: #8b5cf6;
+    font-weight: bold;
+}
+
+/* Filters */
+#search_input, #filter_combo {
+    background-color: #16213e;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    padding: 10px;
+    color: #ffffff;
+}
+
+#search_input:focus, #filter_combo:focus {
+    border-color: #8b5cf6;
+}
+
+/* Video Player */
+#video_widget {
+    background-color: #000000;
+    border-radius: 8px;
+}
+
+#video_controls {
+    background-color: #16213e;
+    padding: 10px;
+    border-radius: 0 0 8px 8px;
+}
+
+#play_button {
+    background-color: #8b5cf6;
+    border: none;
+    border-radius: 50%;
+    color: white;
+}
+
+#progress_slider {
+    height: 6px;
+}
+
+#progress_slider::groove:horizontal {
+    background-color: #374151;
+    border-radius: 3px;
+}
+
+#progress_slider::handle:horizontal {
+    background-color: #8b5cf6;
+    width: 14px;
+    height: 14px;
+    margin: -4px 0;
+    border-radius: 7px;
+}
+
+#progress_slider::sub-page:horizontal {
+    background-color: #8b5cf6;
+    border-radius: 3px;
+}
+
+/* Course Detail */
+#course_title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#course_instructor {
+    color: #8b5cf6;
+}
+
+#course_category {
+    color: #9ca3af;
+}
+
+#price_card {
+    background-color: #16213e;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+#course_price {
+    font-size: 32px;
+    font-weight: bold;
+    color: #8b5cf6;
+}
+
+#enroll_button {
+    background-color: #8b5cf6;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    color: white;
+    font-weight: bold;
+}
+
+#enroll_button:hover {
+    background-color: #7c3aed;
+}
+
+#back_button {
+    background-color: transparent;
+    border: none;
+    color: #8b5cf6;
+}
+
+#back_button:hover {
+    color: #7c3aed;
+}
+
+/* Scrollbars */
+QScrollBar:vertical {
+    background-color: #16213e;
+    width: 10px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #374151;
+    border-radius: 5px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #8b5cf6;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}

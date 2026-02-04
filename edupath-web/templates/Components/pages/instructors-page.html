@@ -1,0 +1,19 @@
+{% for item in instructors %}
+<div class="group text-center">
+    <div class="relative inline-block mx-auto rounded-full overflow-hidden">
+        <img src="{{ item.img }}" class="" alt="">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black rounded-full opacity-0 group-hover:opacity-100 duration-500"></div>
+
+        <ul class="list-none absolute start-0 end-0 -bottom-20 group-hover:bottom-5 duration-500">
+            <li class="inline"><a href="" class="size-8 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center bg-violet-600 text-white rounded-full"><i data-feather="facebook" class="size-4"></i></a></li>
+            <li class="inline"><a href="" class="size-8 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center bg-violet-600 text-white rounded-full"><i data-feather="instagram" class="size-4"></i></a></li>
+            <li class="inline"><a href="" class="size-8 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center bg-violet-600 text-white rounded-full"><i data-feather="linkedin" class="size-4"></i></a></li>
+        </ul><!--end icon-->
+    </div>
+
+    <div class="content mt-3">
+        <a href="" class="text-lg font-medium hover:text-violet-600 duration-500">{{ item.name }}</a>
+        <p class="text-slate-400">{{ item.title }}</p>
+    </div>
+</div><!--end content-->
+{% endfor %}

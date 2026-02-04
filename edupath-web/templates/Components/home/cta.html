@@ -1,0 +1,6 @@
+{% for item in ctas %}
+<div class="counter-box text-center">
+    <h1 class="text-white lg:text-5xl text-4xl font-semibold mb-2"><span class="counter-value" data-target="{{ item.target }}">{{ item.number }}</span>{{ item.symbol }}</h1>
+    <h5 class="counter-head text-white uppercase font-medium">{{ item.title }}</h5>
+</div><!--end counter box-->
+{% endfor %}

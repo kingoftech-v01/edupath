@@ -1,0 +1,306 @@
+{% extends "Base/base.html" %}
+        
+{% block hero_content %}
+
+{% include 'Base/navbar-dark.html' %}
+
+        <!-- Searchbar modal -->
+        <dialog id="navbarSearch" class="modal rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white w-11/12 max-w-5xl mt-20">
+            <div class="relative w-full h-auto">
+                <form method="dialog" class="modal-backdrop">
+                    <button class="size-5 rounded-md flex justify-center items-center absolute top-0 end-0 btn-ghost"><i data-feather="x" class="size-4"></i></button>
+                </form>
+                <div class="p-6 text-center">
+                    <form class="relative">
+                        <i class="iconoir-search text-lg absolute top-2.5 end-0"></i>
+                        <input type="text" class="w-full py-2 px-3 bg-transparent border-0 focus:ring-0 focus:outline-none rounded-md pe-6 h-10" name="s" id="searchItem" placeholder="Search...">
+                    </form>
+                </div>
+            </div>
+        </dialog>
+        <!-- Searchbar modal -->
+
+        <!-- Start -->
+        <section class="relative pt-32 md:pb-24 pb-16">
+            <div class="container">
+                <div class="md:flex justify-center">
+                    <div class="lg:w-3/5">
+                        <h3 class="text-3xl leading-normal font-medium">
+                            {% if course.title %}
+                                {{ course.title }}
+                            {% else %}
+                                Become a Professional Graphic Designer
+                            {% endif %}
+                        </h3>
+                        <div class="flex items-center mx-auto mt-3">
+                            <img src="/static/assets/images/team/2.jpg" class="size-8 rounded-full shadow-md dark:shadow-gray-800" alt="">
+                            <a href="" class="font-semibold block ms-3">
+                                {% if course.name %}
+                                    {{ course.name }}
+                                {% else %}
+                                    Calvin Carlo
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:flex justify-center text-center">
+                    <div class="lg:w-4/5">
+                        <ul class="tracking-[0.5px] mb-0 inline-block mt-4">
+                            <li class="inline-flex items-center mt-2 me-5">
+                                <i class="iconoir-clock text-lg"></i>
+                                <span class="text-slate-400 ms-2">10 Weeks</span>
+                            </li>
+        
+                            <li class="inline-flex items-center mt-2 me-5">
+                                <i class="iconoir-wifi text-lg"></i>
+                                <span class="text-slate-400 ms-2">All Levels</span>
+                            </li>
+                            
+                            <li class="inline-flex items-center mt-2 me-5">
+                                <i class="iconoir-book text-lg"></i>
+                                <span class="text-slate-400 ms-2">
+                                    {% if course.lessons %}
+                                        {{ course.lessons }} Lessons
+                                    {% else %}
+                                        16 Lessons
+                                    {% endif %}
+                                </span>
+                            </li>
+                            
+                            <li class="inline-flex items-center mt-2 me-5">
+                                <i class="iconoir-cube text-lg"></i>
+                                <span class="text-slate-400 ms-2">0 Quiz</span>
+                            </li>
+                            
+                            <li class="inline-flex items-center mt-2 me-5">
+                                <i class="iconoir-open-book text-lg"></i>
+                                <span class="text-slate-400 ms-2">
+                                    {% if course.students %}
+                                        {{ course.students }} Students
+                                    {% else %}
+                                        5 Students
+                                    {% endif %}
+                                </span>
+                            </li>
+                            
+                            <li class="inline-flex items-center mt-2">
+                                <i class="iconoir-cart text-lg"></i>
+                                <a href="" target="_blank" class="text-violet-600 ms-2">Enroll Now</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="md:flex justify-center mt-6">
+                    <div class="lg:w-full">
+                        <div class="relative">
+                            <img src="
+                            {% if course.img %}
+                                {{ course.img }}
+                            {% else %}
+                               /static/assets/images/course/1.jpg
+                            {% endif %}" class="rounded-lg shadow-md dark:shadow-gray-800" alt="">
+                            <div class="absolute bottom-2/4 translate-y-2/4 start-0 end-0 text-center">
+                                <a href="#!" data-type="youtube" data-id="yba7hPeTSjk"
+                                    class="lightbox h-20 w-20 rounded-full shadow-lg dark:shadow-gray-800 inline-flex items-center justify-center bg-white dark:bg-slate-900 text-violet-600">
+                                    <i class="mdi mdi-play inline-flex items-center justify-center text-2xl"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:flex justify-center mt-10">
+                    <div class="lg:w-3/5">
+                        <h5 class="text-2xl font-semibold mb-4">Overview</h5>
+
+                        <p class="text-slate-400 mb-3">Ooh, name it after me! Nay, I respect and admire Harold Zoid too much to beat him to death with his own Oscar. Why would I want to know that? What's with you kids? Every other day it's food, food, food. Alright, I'll get you some stupid food.</p>
+                        <p class="text-slate-400 mb-3">It's a T. It goes “tuh”. You seem malnourished. Are you suffering from intestinal parasites? I suppose I could part with 'one' and still be feared… And I'd do it again! And perhaps a third time! But that would be it.</p>
+                        <p class="text-slate-400 mb-3">I'm just glad my fat, ugly mama isn't alive to see this day. I can explain. It's very valuable. I barely knew Philip, but as a clergyman I have no problem telling his most intimate friends all about him.</p>
+                        <p class="text-slate-400 mb-3">Bender, we're trying our best. Kif might! You can crush me but you can't crush my spirit! Kif, I have mated with a woman. Inform the men. I'm Santa Claus!</p>
+                        <p class="text-slate-400">What are you hacking off? Is it my torso?! 'It is!' My precious torso! You, a bobsleder!? That I'd like to see! And I'd do it again! And perhaps a third time! But that would be it. My fellow Earthicans, as I have explained in my book 'Earth in the Balance”, and the much more popular ”Harry Potter and the Balance of Earth', we need to defend our planet against pollution. Also dark wizards.</p>
+
+                        <img src="/static/assets/images/course/2.jpg" class="rounded-md shadow mt-4" alt="">
+
+                        <div class="mt-6">
+                            <h5 class="text-2xl font-semibold">Curriculum</h5>
+                        </div>
+        
+                        <div class="mt-6">
+                            <h5 class="text-lg font-semibold mb-4">Introductions</h5>
+    
+                            <div class="relative overflow-x-auto block w-full bg-white dark:bg-slate-900 shadow shadow-slate-200 dark:shadow-slate-800 rounded-md">
+                                <table class="w-full text-start">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-5 text-start">Lessons</th>
+                                            <th class="px-4 py-5 text-end">Time</th>
+                                        </tr>
+                                    </thead>
+    
+                                    <tbody>
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 1</a></td>
+                                            <td class="p-4 text-end"><span class="bg-violet-600/10 text-violet-600 text-[12px] px-2.5 py-1 rounded-md h-4">Watch Free</span></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 2</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 3</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 4</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+    
+                        <div class="mt-6">
+                            <h5 class="text-lg font-semibold mb-4">Mastery</h5>
+                            
+                            <div class="relative overflow-x-auto block w-full bg-white dark:bg-slate-900 shadow shadow-slate-200 dark:shadow-slate-800 rounded-md">
+                                <table class="w-full text-start">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-5 text-start">Lessons</th>
+                                            <th class="px-4 py-5 text-end">Time</th>
+                                        </tr>
+                                    </thead>
+    
+                                    <tbody>
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 5</a></td>
+                                            <td class="p-4 text-end"><span class="bg-violet-600/10 text-violet-600 text-[12px] px-2.5 py-1 rounded-md h-4">Watch Free</span></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 6</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 7</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 8</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+    
+                        <div class="mt-6">
+                            <h5 class="text-lg font-semibold mb-4">Final Thoughts</h5>
+                            
+                            <div class="relative overflow-x-auto block w-full bg-white dark:bg-slate-900 shadow shadow-slate-200 dark:shadow-slate-800 rounded-md">
+                                <table class="w-full text-start">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-5 text-start">Lessons</th>
+                                            <th class="px-4 py-5 text-end">Time</th>
+                                        </tr>
+                                    </thead>
+    
+                                    <tbody>
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 9</a></td>
+                                            <td class="p-4 text-end"><span class="bg-violet-600/10 text-violet-600 text-[12px] px-2.5 py-1 rounded-md h-4">Watch Free</span></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 10</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 11</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 12</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+    
+                        <div class="mt-6">
+                            <h5 class="text-lg font-semibold mb-4">Bonus</h5>
+                            
+                            <div class="relative overflow-x-auto block w-full bg-white dark:bg-slate-900 shadow shadow-slate-200 dark:shadow-slate-800 rounded-md">
+                                <table class="w-full text-start">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-5 text-start">Lessons</th>
+                                            <th class="px-4 py-5 text-end">Time</th>
+                                        </tr>
+                                    </thead>
+    
+                                    <tbody>
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 13</a></td>
+                                            <td class="p-4 text-end"><span class="bg-violet-600/10 text-violet-600 text-[12px] px-2.5 py-1 rounded-md h-4">Watch Free</span></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 14</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 15</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+    
+                                        <tr class="border-t border-slate-100 dark:border-slate-800">
+                                            <td class="p-4"><a href="" class=""><i class="iconoir-clipboard-check text-lg align-middle me-1"></i> Lesson 16</a></td>
+                                            <td class="p-4 text-end"><i class="iconoir-lock text-lg"></i></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--end container-->
+
+            <div class="container relative md:mt-24 mt-16">
+                <div class="grid grid-cols-1 pb-6 text-center">
+                    <h4 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Recent Courses</h4>
+
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+
+                <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-6 gap-6">
+                    
+                    <!-- Components/courses/detail-course.html -->
+                    {% include 'Components/courses/detail-course.html' %}
+                    
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative md:mt-24 mt-16">
+                
+                <!-- Components/courses/subscribe.html -->
+                {% include 'Components/courses/subscribe.html' %}
+
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- End -->
+
+{% endblock %}

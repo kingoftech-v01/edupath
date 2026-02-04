@@ -1,0 +1,23 @@
+{% for item in reviews %}
+<div class="tiny-slide">
+    <div class="mx-3">
+        <ul class="text-md font-medium text-amber-500 list-none mb-2">
+            <li class="inline"><i class="mdi mdi-star"></i></li>
+            <li class="inline"><i class="mdi mdi-star"></i></li>
+            <li class="inline"><i class="mdi mdi-star"></i></li>
+            <li class="inline"><i class="mdi mdi-star"></i></li>
+            <li class="inline"><i class="mdi mdi-star"></i></li>
+        </ul>
+
+        <p class="text-lg text-slate-400"> " {{ item.desc }} " </p>
+
+        <div class="flex items-center mt-3">
+            <img src="{{ item.img }}" class="size-12 rounded-full shadow-md shadow-slate-100 dark:shadow-slate-800" alt="">
+            <div class="ms-2">
+                <h6 class="font-semibold">{{ item.name }}</h6>
+                <span class="text-slate-400 text-sm">{{ item.title }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}

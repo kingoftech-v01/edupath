@@ -1,0 +1,171 @@
+{% extends "Base/base.html" %}
+        
+{% block hero_content %}
+
+{% include 'Base/navbar-tagline-dark.html' %}
+
+        <!-- Searchbar modal -->
+        <dialog id="navbarSearch" class="modal rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white w-11/12 max-w-5xl md:mt-32 mt-20">
+            <div class="relative w-full h-auto">
+                <form method="dialog" class="modal-backdrop">
+                    <button class="size-5 rounded-md flex justify-center items-center absolute top-0 end-0 btn-ghost"><i data-feather="x" class="size-4"></i></button>
+                </form>
+                <div class="p-6 text-center">
+                    <form class="relative">
+                        <i class="iconoir-search text-lg absolute top-2.5 end-0"></i>
+                        <input type="text" class="w-full py-2 px-3 bg-transparent border-0 focus:ring-0 focus:outline-none rounded-md pe-6 h-10" name="s" id="searchItem" placeholder="Search...">
+                    </form>
+                </div>
+            </div>
+        </dialog>
+        <!-- Searchbar modal -->
+
+        <!-- Start Hero -->
+        <section class="relative overflow-hidden md:py-44 py-36">
+            <div class="container relative md:mt-16 mt-6">
+                <div class="grid lg:grid-cols-12 md:grid-cols-2 grid-cols-1 items-center gap-6">
+                    <div class="lg:col-span-7">
+                        <h6 class="text-yellow-500 font-semibold mb-3 uppercase">100% Satisfaction Guarantee</h6>
+                        <h1 class="font-bold lg:leading-normal leading-normal tracking-wide text-4xl lg:text-5xl mb-5">Learn Product Design <br> in <span class="bg-gradient-to-l from-fuchsia-500 to-violet-600 text-transparent bg-clip-text">16 weeks</span></h1>
+                        <p class="text-slate-400 text-lg max-w-xl">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                        
+                        <div class="mt-6">
+                            <a href="" class="h-10 px-6 tracking-wide inline-flex items-center justify-center font-medium rounded-md bg-violet-600 text-white">Explore Courses <i class="mdi mdi-arrow-right align-middle ms-1"></i></a>
+                            <a href="#!" data-type="youtube" data-id="S_CGed6E610" class="size-10 inline-flex items-center justify-center tracking-wide align-middle duration-500 text-base text-center rounded-full bg-violet-600/10 hover:bg-violet-600 text-violet-600 hover:text-white ms-1 lightbox"><i data-feather="video" class="h-4 w-4"></i></a><span class="font-medium text-slate-400 dark:text-white/80 ms-1 align-middle"> Watch Now</span>
+                        </div>
+                    </div><!--end col-->
+
+                    <div class="lg:col-span-5">
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="relative md:shrink-0">
+                                <img src="/static/assets/images/course/1.jpg" class="xl:size-56 lg:size-44 md:size-40 size-44 object-cover shadow shadow-slate-100 dark:shadow-slate-800 rounded-s-full" alt="">
+
+                                <div class="overflow-hidden after:content-[''] after:absolute after:size-12 after:bg-fuchsia-500 after:top-0 after:-start-6 after:-z-1 after:rounded-full"></div>
+                            </div><!--end content-->
+                            
+                            <div class="relative md:shrink-0">
+                                <img src="/static/assets/images/course/2.jpg" class="xl:size-56 lg:size-44 md:size-40 size-44 object-cover shadow shadow-slate-100 dark:shadow-slate-800 rounded-full" alt="">
+                                
+                                <div class="overflow-hidden after:content-[''] after:absolute after:size-24 after:bg-violet-600/40 after:-top-10 after:-end-0 after:-z-1 after:rounded-lg after:rotate-[36deg]"></div>
+                            </div><!--end content-->
+                            
+                            <div class="relative md:shrink-0">
+                                <img src="/static/assets/images/course/3.jpg" class="xl:size-56 lg:size-44 md:size-40 size-44 object-cover shadow shadow-slate-100 dark:shadow-slate-800 rounded-xl" alt="">
+                                
+                                <div class="overflow-hidden after:content-[''] after:absolute after:size-40 after:bg-yellow-400 after:-bottom-10 after:-start-10 after:-z-1 after:rounded-full"></div>
+                            </div><!--end content-->
+                            
+                            <div class="relative md:shrink-0">
+                                <img src="/static/assets/images/course/4.jpg" class="xl:size-56 lg:size-44 md:size-40 size-44 object-cover shadow shadow-slate-100 dark:shadow-slate-800 rounded-e-full" alt="">
+                                
+                                <div class="overflow-hidden after:content-[''] after:absolute after:size-6 after:bg-violet-600/60 after:bottom-10 after:-end-12 after:-z-1 after:rounded-md"></div>
+                                <div class="overflow-hidden after:content-[''] after:absolute after:size-6 after:bg-fuchsia-500/60 after:-bottom-12 after:start-10 after:-z-1 after:rounded-full"></div>
+                            </div><!--end content-->
+                        </div><!--end grid-->
+                    </div><!--end col-->
+                </div><!--end grid-->
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- End Hero -->
+
+        <!-- Start -->
+        <section class="relative py-12 bg-violet-600">
+            <div class="container relative">
+                <div class="grid lg:grid-cols-12 grid-cols-1 md:text-start text-center justify-center">
+                    <div class="lg:col-start-2 lg:col-span-10">
+                        <div class="grid md:grid-cols-4 sm:grid-cols-2 grid-cols-2 items-center gap-6">
+                            
+                            <!-- Components/home/cta2.html -->
+                            {% include 'Components/home/cta2.html' %}
+                    
+                        </div>
+                    </div>
+                </div><!--end grid-->
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- End -->
+
+        <!-- Start -->
+        <section class="relative md:py-24 py-16">
+            <div class="container relative">
+                <div class="grid grid-cols-1 pb-6 text-center">
+                    <h4 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Explore Our Best Courses</h4>
+                    
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+                
+                <div class="grid lg:grid-cols-2 mt-6 gap-6">
+                    
+                    <!-- Components/home/courses4.html -->
+                    {% include 'Components/home/courses4.html' %}
+
+                </div><!--end grid-->
+
+                <div class="grid md:grid-cols-12 grid-cols-1 mt-6">
+                    <div class="md:col-span-12 text-center">
+                        <a href="/list/" class="text-slate-400 hover:text-violet-600 duration-500 ease-in-out">See More Courses <i class="mdi mdi-arrow-right align-middle"></i></a>
+                    </div>
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative lg:mt-24 mt-16">
+                <div class="grid grid-cols-1 pb-8 text-center">
+                    <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">What Our Students Say ?</h3>
+
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+
+                <div class="flex justify-center relative mt-6">
+                    <div class="relative w-full">
+                        <div class="tiny-three-item">
+                            
+                            <!-- Components/home/reviews.html -->
+                            {% include 'Components/home/reviews.html' %}
+
+                        </div>
+                    </div>
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative md:mt-24 mt-16">
+                <div class="grid md:grid-cols-12 grid-cols-1 items-center gap-6">
+                    
+                    <!-- Components/home/que&ans.html -->
+                    {% include 'Components/home/que&ans.html' %}
+
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative lg:mt-24 mt-16">
+                <div class="grid grid-cols-1 pb-6 text-center">
+                    <h4 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Expert Instructors</h4>
+
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+
+                <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 mt-6 gap-6">
+                    
+                    <!-- Components/home/instructors.html -->
+                    {% include 'Components/home/instructors.html' %}
+
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative md:mt-24 mt-16">
+                <div class="grid grid-cols-1 pb-6 text-center">
+                    <h4 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Blogs Or News</h4>
+
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+
+                <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-6 gap-6">                    
+                    
+                    <!-- Components/home/blogs.html -->
+                    {% include 'Components/home/blogs.html' %}
+
+                </div><!--end grid-->
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- Start -->
+
+{% endblock %}

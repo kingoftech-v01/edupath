@@ -1,0 +1,76 @@
+from App.models import Blog
+from decimal import Decimal
+
+# Define the blog data
+blogs = [
+        {
+            'id' : 1,
+            'img' : '/static/assets/images/course/1.jpg', 
+            'name' : 'Degree', 
+            'title' : "The Future of Remote Work: Trending Now", 
+        },
+        {
+            'id' : 2,
+            'img' : '/static/assets/images/course/2.jpg', 
+            'name' : 'University', 
+            'title' : "The Psychology of Learning: How Cognitive", 
+        },
+        {
+            'id' : 3,
+            'img' : '/static/assets/images/course/3.jpg', 
+            'name' : 'Developer', 
+            'title' : "Crafting Compelling Presentations: Design", 
+        },
+        {
+            'id' : 4,
+            'img' : '/static/assets/images/course/4.jpg', 
+            'name' : 'HTML5', 
+            'title' : "Demystifying Data Science: A Beginner’s", 
+        },
+        {
+            'id' : 5,
+            'img' : '/static/assets/images/course/5.jpg', 
+            'name' : 'Institution', 
+            'title' : "The Art of Effective Online Collaboration", 
+        },
+        {
+            'id' : 6,
+            'img' : '/static/assets/images/course/6.jpg', 
+            'name' : 'Graduation', 
+            'title' : "Student Success Stories: From Learning", 
+        },
+        {
+            'id' : 7,
+            'img' : '/static/assets/images/course/7.jpg', 
+            'name' : 'Certification', 
+            'title' : "Instructor Spotlight: Meet the Faces Behind", 
+        },
+        {
+            'id' : 8,
+            'img' : '/static/assets/images/course/8.jpg', 
+            'name' : 'Frontend', 
+            'title' : "Navigating the Job Market: Career Tips", 
+        },
+        {
+            'id' : 9,
+            'img' : '/static/assets/images/course/9.jpg', 
+            'name' : 'Mobile', 
+            'title' : "Building a Growth Mindset: Strategie", 
+        }
+    ]
+
+# Loop through the data and create Blog entries
+for blog in blogs:
+    Blog.objects.create(
+        id=blog['id'],
+        title=blog['title'],
+        img=blog['img'],
+        name=blog['name'],
+    )
+    
+----------------------------------------------
+
+
+# Fetch and display all blogs
+for blog in Blog.objects.all():
+    print(f"ID: {blog.id}, Title: {blog.title}, Name: {blog.name}, Image: {blog.img}")

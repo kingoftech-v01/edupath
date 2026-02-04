@@ -1,0 +1,106 @@
+{% extends "Base/base.html" %}
+        
+{% block hero_content %}
+
+{% include 'Base/navbar-dark1.html' %}
+
+        <!-- Searchbar modal -->
+        <dialog id="navbarSearch" class="modal rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white w-11/12 max-w-5xl mt-20">
+            <div class="relative w-full h-auto">
+                <form method="dialog" class="modal-backdrop">
+                    <button class="size-5 rounded-md flex justify-center items-center absolute top-0 end-0 btn-ghost"><i data-feather="x" class="size-4"></i></button>
+                </form>
+                <div class="p-6 text-center">
+                    <form class="relative">
+                        <i class="iconoir-search text-lg absolute top-2.5 end-0"></i>
+                        <input type="text" class="w-full py-2 px-3 bg-transparent border-0 focus:ring-0 focus:outline-none rounded-md pe-6 h-10" name="s" id="searchItem" placeholder="Search...">
+                    </form>
+                </div>
+            </div>
+        </dialog>
+        <!-- Searchbar modal -->
+
+        <!-- Start Hero -->
+        <section class="relative py-5 bg-slate-50 dark:bg-slate-800 mt-[74px]">
+            <div class="container relative">
+                <div class="grid md:grid-cols-12 grid-cols-1 gap-2 items-center">
+                    <div class="lg:col-span-5 md:col-span-4">
+                        <h3 class="text-2xl md:leading-normal leading-normal font-semibold">Courses</h3>
+                    </div>
+
+                    <div class="lg:col-span-7 md:col-span-8 md:text-end">
+                        <ul class="tracking-[0.5px] mb-0 inline-block">
+                            <li class="inline-block text-slate-400 dark:text-white/60 duration-500 ease-in-out hover:text-violet-600 dark:hover:text-white"><a href="/">Edupath</a></li>
+                            <li class="inline-block text-slate-500 dark:text-white/60 mx-0.5 ltr:rotate-0 rtl:rotate-180"><i class="iconoir-nav-arrow-right align-middle"></i></li>
+                            <li class="inline-block text-slate-400 dark:text-white/60 duration-500 ease-in-out hover:text-violet-600 dark:hover:text-white"><a href="">Courses</a></li>
+                            <li class="inline-block text-slate-500 dark:text-white/60 mx-0.5 ltr:rotate-0 rtl:rotate-180"><i class="iconoir-nav-arrow-right align-middle"></i></li>
+                            <li class="inline-block text-violet-600 dark:text-white" aria-current="page">Grid Courses</li>
+                        </ul>
+                    </div>
+                </div>
+            </div><!--end container-->
+        </section>
+        <!-- End Hero -->
+        
+        <!-- Start -->
+        <section class="relative py-12">
+            <div class="container relative">
+                <div class="grid lg:grid-cols-12 md:grid-cols-2 grid-cols-1 gap-6">
+                    <div class="lg:col-span-8 md:order-1 order-2">
+                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-6">
+                            
+                            <!-- Components/courses/grid-sidebar-courses.html -->
+                            {% include 'Components/courses/grid-sidebar-courses.html' %}
+                            
+                        </div><!--edit grid-->
+
+                        <div class="grid md:grid-cols-12 grid-cols-1 mt-6">
+                            <div class="md:col-span-12 text-center">
+                                <nav>
+                                    <ul class="inline-flex items-center -space-x-px">
+                                        <li>
+                                            <a href="#" class="size-8 inline-flex justify-center items-center mx-1 rounded-full text-slate-400 bg-white dark:bg-slate-900 hover:text-white shadow-sm shadow-slate-100 dark:shadow-slate-800 hover:border-violet-600 dark:hover:border-violet-600 hover:bg-violet-600 dark:hover:bg-violet-600">
+                                                <i class="mdi mdi-chevron-left text-[20px]"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="size-8 inline-flex justify-center items-center mx-1 rounded-full text-slate-400 hover:text-white bg-white dark:bg-slate-900 shadow-sm shadow-slate-100 dark:shadow-slate-800 hover:border-violet-600 dark:hover:border-violet-600 hover:bg-violet-600 dark:hover:bg-violet-600">1</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="size-8 inline-flex justify-center items-center mx-1 rounded-full text-slate-400 hover:text-white bg-white dark:bg-slate-900 shadow-sm shadow-slate-100 dark:shadow-slate-800 hover:border-violet-600 dark:hover:border-violet-600 hover:bg-violet-600 dark:hover:bg-violet-600">2</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" aria-current="page" class="z-10 size-8 inline-flex justify-center items-center mx-1 rounded-full text-white bg-violet-600 shadow-sm shadow-slate-100 dark:shadow-slate-800">3</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="size-8 inline-flex justify-center items-center mx-1 rounded-full text-slate-400 hover:text-white bg-white dark:bg-slate-900 shadow-sm shadow-slate-100 dark:shadow-slate-800 hover:border-violet-600 dark:hover:border-violet-600 hover:bg-violet-600 dark:hover:bg-violet-600">4</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="size-8 inline-flex justify-center items-center mx-1 rounded-full text-slate-400 bg-white dark:bg-slate-900 hover:text-white shadow-sm shadow-slate-100 dark:shadow-slate-800 hover:border-violet-600 dark:hover:border-violet-600 hover:bg-violet-600 dark:hover:bg-violet-600">
+                                                <i class="mdi mdi-chevron-right text-[20px]"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div><!--end grid-->
+                    </div><!--end col-->
+
+                    <!-- Components/courses/side-course.html -->
+                    {% include 'Components/courses/side-course.html' %}
+                    
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative md:mt-24 mt-16">
+                <div class="grid grid-cols-1">
+                    
+                    <!-- Components/courses/information.html -->
+                    {% include 'Components/courses/information.html' %}
+
+                </div><!--end grid-->
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- End -->
+
+{% endblock %}

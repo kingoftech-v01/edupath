@@ -1,0 +1,70 @@
+{% extends "Base/base.html" %}
+        
+{% block hero_content %}
+
+{% include 'Base/navbar-light.html' %}
+
+        <!-- Searchbar modal -->
+        <dialog id="navbarSearch" class="modal rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white w-11/12 max-w-5xl mt-20">
+            <div class="relative w-full h-auto">
+                <form method="dialog" class="modal-backdrop">
+                    <button class="size-5 rounded-md flex justify-center items-center absolute top-0 end-0 btn-ghost"><i data-feather="x" class="size-4"></i></button>
+                </form>
+                <div class="p-6 text-center">
+                    <form class="relative">
+                        <i class="iconoir-search text-lg absolute top-2.5 end-0"></i>
+                        <input type="text" class="w-full py-2 px-3 bg-transparent border-0 focus:ring-0 focus:outline-none rounded-md pe-6 h-10" name="s" id="searchItem" placeholder="Search...">
+                    </form>
+                </div>
+            </div>
+        </dialog>
+        <!-- Searchbar modal -->
+
+        <!-- Start Hero -->
+        <section class="relative table w-full py-32 lg:py-44 bg-[url('../../static/assets/images/bg/3.jpg')] bg-no-repeat bg-center bg-cover">
+            <div class="absolute inset-0 bg-black opacity-80"></div>
+            <div class="container relative">
+                <div class="grid grid-cols-1 text-center mt-10">
+                    <h3 class="md:text-3xl text-2xl md:leading-normal leading-normal font-semibold text-white">Instructors</h3>
+                </div><!--end grid-->
+            </div><!--end container-->
+        </section><!--end section-->
+        <div class="relative">
+            <div class="shape overflow-hidden z-1 text-white dark:text-slate-900">
+                <svg viewBox="0 0 2880 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 48H1437.5H2880V0H2160C1442.5 52 720 0 720 0H0V48Z" fill="currentColor"></path>
+                </svg>
+            </div>
+        </div>
+        <!-- End Hero -->
+
+        <!-- Start -->
+        <section class="relative lg:py-24 py-16">
+            <div class="container relative">
+                <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-6">
+                    
+                    <!-- Components/pages/instructors-page.html -->
+                    {% include 'Components/pages/instructors-page.html' %}
+                    
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative md:mt-24 mt-16">
+                <div class="grid md:grid-cols-12 grid-cols-1 items-center gap-6">
+                    
+                    <!-- Components/home/que&ans.html -->
+                    {% include 'Components/home/que&ans.html' %}
+
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative lg:mt-24 mt-16">
+                
+                <!-- Components/home/get-in-touch.html -->
+                {% include 'Components/home/get-in-touch.html' %}
+
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- End -->
+
+{% endblock %}

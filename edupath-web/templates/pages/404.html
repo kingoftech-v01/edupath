@@ -1,0 +1,29 @@
+{% extends "Base/no-header.html" %}
+        
+{% block hero_content %}
+
+        <section class="relative bg-violet-600/5">
+            <div class="container-fluid relative">
+                <div class="grid grid-cols-1">
+                    <div class="flex flex-col min-h-screen justify-center md:px-10 py-10 px-4">
+                        <div class="text-center">
+                            <a href="/"><img src="/static/assets/images/logo-icon-64.png" class="mx-auto" alt=""></a>
+                        </div>
+                        <div class="title-heading text-center my-auto">
+                            <img src="/static/assets/images/error.png" class="mx-auto" alt="">
+                            <h1 class="my-6 md:text-4xl text-3xl font-bold">Page Not Found?</h1>
+                            <p class="text-slate-400">Whoops, this is embarassing. <br> Looks like the page you were looking for wasn't found.</p>
+                            
+                            <div class="mt-4">
+                                <a href="/" class="h-10 px-5 tracking-wide inline-flex items-center justify-center font-medium rounded-md bg-violet-600 text-white">Back to Home</a>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <p class="mb-0 text-slate-400">© <script>document.write(new Date().getFullYear())</script> Edupath. Design & Develop with <i class="mdi mdi-heart text-red-600"></i> by <a href="https://shreethemes.in/" target="_blank" class="text-reset">Shreethemes</a>.</p>
+                        </div>
+                    </div>
+                </div><!--end grid-->
+            </div><!--end container-->
+        </section><!--end section-->
+
+{% endblock %}

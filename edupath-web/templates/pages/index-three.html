@@ -1,0 +1,169 @@
+{% extends "Base/base.html" %}
+        
+{% block hero_content %}
+
+{% include 'Base/navbar-light.html' %}
+
+        <!-- Searchbar modal -->
+        <dialog id="navbarSearch" class="modal rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white w-11/12 max-w-5xl mt-20">
+            <div class="relative w-full h-auto">
+                <form method="dialog" class="modal-backdrop">
+                    <button class="size-5 rounded-md flex justify-center items-center absolute top-0 end-0 btn-ghost"><i data-feather="x" class="size-4"></i></button>
+                </form>
+                <div class="p-6 text-center">
+                    <form class="relative">
+                        <i class="iconoir-search text-lg absolute top-2.5 end-0"></i>
+                        <input type="text" class="w-full py-2 px-3 bg-transparent border-0 focus:outline-none rounded-md pe-6 h-10" name="s" id="searchItem" placeholder="Search...">
+                    </form>
+                </div>
+            </div>
+        </dialog>
+        <!-- Searchbar modal -->
+
+        <!-- Start Hero -->
+        <section class="relative table w-full md:py-44 py-36 bg-[url('../../static/assets/images/bg/4.jpg')] bg-no-repeat bg-center bg-cover">
+            <div class="absolute inset-0 bg-slate-950/90"></div>
+            <div class="absolute inset-0 opacity-5 bg-[url('../../static/assets/images/map.svg')] bg-no-repeat bg-center bg-cover"></div>
+            <div class="container relative">
+                <div class="grid md:grid-cols-12 grid-cols-1 items-center mt-10 gap-6">
+                    <div class="lg:col-span-7 md:col-span-6">
+                        <h1 class="font-semibold lg:leading-normal leading-normal tracking-wide text-4xl lg:text-5xl text-white mb-5">Get Quality <span class="font-bold text-yellow-400 typewrite" data-period="2000" data-type='[ "Courses", "Education" ]'></span> <br> Through <span class="after:absolute after:end-0 after:start-0 after:bottom-3 after:-rotate-6 after:h-2 after:w-auto after:rounded-md after:bg-yellow-400/50 after:-z-1 z-1 relative">1-on-1</span> <br> Online Classes</h1>
+                        
+                        <p class="text-white/50 text-lg max-w-xl">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                        
+                        <div class="mt-6">
+                            <form class="relative max-w-xl">
+                                <input type="email" id="subemail" name="name" class="pt-4 pe-40 pb-4 ps-6 w-full h-[50px] outline-none text-white rounded-full bg-slate-900/70 border border-slate-800" placeholder="Enter your email id..">
+                                <button type="submit" class="h-12 px-6 tracking-wide items-center justify-center font-medium bg-yellow-500 text-white rounded-full absolute top-[1px] end-[1px]">Subcribe Now</button>
+                            </form><!--end form-->
+                        </div>
+                    </div><!--end col-->
+
+                    <div class="lg:col-span-5 md:col-span-6">
+                        <div class="grid grid-cols-1 relative xl:ms-20">
+                            <div class="tiny-one-item">
+                                
+                                <!-- Components/home/courses3.html -->
+                                {% include 'Components/home/courses3.html' %}
+                                
+                            </div><!--end tiny slider-->
+                        </div>
+                    </div><!--end col-->
+                </div><!--end grid-->
+            </div><!--end container -->
+        </section><!--end section-->
+        <!-- End Hero -->
+
+        <!-- Start -->
+        <section class="relative md:py-24 py-16">
+            <div class="container relative">
+                <div class="grid grid-cols-1 pb-6 text-center">
+                    <h4 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Discover Powerful Features</h4>
+
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+
+                <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 mt-6 gap-6">
+                    
+                    <!-- Components/home/features.html -->
+                    {% include 'Components/home/features.html' %}
+
+                </div>
+            </div><!--end container-->
+
+            <div class="container relative md:mt-24 mt-16">
+                <div class="grid grid-cols-1 pb-6 text-center">
+                    <h4 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Explore 1500+ Free Education Courses</h4>
+
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+
+                <div class="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-6 gap-6">
+                    
+                    <!-- Components/home/categories.html -->
+                    {% include 'Components/home/categories.html' %}
+
+                </div><!--end grid-->
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- End -->
+
+        <!-- Start CTA -->
+        <section class="relative py-24 bg-[url('../../static/assets/images/bg/3.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
+            <div class="absolute inset-0 bg-black/60"></div>
+            <div class="container relative">
+                <div class="grid lg:grid-cols-12 grid-cols-1 md:text-start text-center justify-center">
+                    <div class="lg:col-start-2 lg:col-span-10">
+                        <div class="grid md:grid-cols-4 sm:grid-cols-2 grid-cols-2 items-center gap-6">
+                            
+                            <!-- Components/home/cta.html -->
+                            {% include 'Components/home/cta.html' %}
+
+                        </div>
+                    </div>
+                </div><!--end grid-->
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- End CTA -->
+
+        <!-- Start -->
+        <section class="relative lg:py-24 py-16">
+            <div class="container relative">
+                <div class="grid grid-cols-1 pb-8 text-center">
+                    <h3 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">What Our Students Say ?</h3>
+
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+
+                <div class="flex justify-center relative mt-6">
+                    <div class="relative w-full">
+                        <div class="tiny-three-item">
+                            
+                            <!-- Components/home/reviews.html -->
+                            {% include 'Components/home/reviews.html' %}
+
+                        </div>
+                    </div>
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative lg:mt-24 mt-16">
+                <div class="grid grid-cols-1 pb-6 text-center">
+                    <h4 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Expert Instructors</h4>
+
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+
+                <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 mt-6 gap-6">
+                    
+                    <!-- Components/home/instructors.html -->
+                    {% include 'Components/home/instructors.html' %}
+
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative md:mt-24 mt-16">
+                <div class="grid grid-cols-1 pb-6 text-center">
+                    <h4 class="mb-6 md:text-3xl text-2xl md:leading-normal leading-normal font-semibold">Blogs Or News</h4>
+
+                    <p class="text-slate-400 max-w-xl mx-auto">Discover a world of knowledge and opportunities with our online education platform pursue a new career.</p>
+                </div><!--end grid-->
+
+                <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-6 gap-6">                    
+                    
+                    <!-- Components/home/blogs.html -->
+                    {% include 'Components/home/blogs.html' %}
+
+                </div><!--end grid-->
+            </div><!--end container-->
+
+            <div class="container relative lg:mt-24 mt-16">
+                
+                <!-- Components/home/get-in-touch.html -->
+                {% include 'Components/home/get-in-touch.html' %}
+
+            </div><!--end container-->
+        </section><!--end section-->
+        <!-- End -->
+
+{% endblock %}
