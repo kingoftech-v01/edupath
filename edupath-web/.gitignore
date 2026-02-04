@@ -26,3 +26,4 @@ media/
 
 # Static files (collected)
 staticfiles/
+.coverage
