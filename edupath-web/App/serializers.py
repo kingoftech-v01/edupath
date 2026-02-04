@@ -111,6 +111,9 @@ class CourseListSerializer(serializers.ModelSerializer):
 
     def get_src(self, obj):
         if obj.video_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.video_file.url)
             return obj.video_file.url
         return ""
 

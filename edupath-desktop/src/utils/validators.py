@@ -20,8 +20,8 @@ def validate_email(email: str) -> Tuple[bool, str]:
     return True, ""
 
 
-def validate_password(password: str, min_length: int = 8) -> Tuple[bool, str]:
-    """Validate password strength."""
+def validate_password(password: str, min_length: int = 10) -> Tuple[bool, str]:
+    """Validate password strength (must match backend's 10-char minimum)."""
     if not password:
         return False, "Password is required"
 

@@ -14,6 +14,10 @@ import javax.inject.Singleton
  * to the Authorization header of outgoing requests. It skips authentication
  * for login and token refresh endpoints.
  *
+ * Note: TokenManager now uses EncryptedSharedPreferences (synchronous).
+ * The suspend call is lightweight (no I/O wait), so the brief coroutine
+ * bridge is acceptable here.
+ *
  * @property tokenManager Manager for retrieving stored JWT tokens
  */
 @Singleton
@@ -42,7 +46,9 @@ class AuthInterceptor @Inject constructor(
             return chain.proceed(originalRequest)
         }
 
-        // Get token
+        // Get token — EncryptedSharedPreferences read is synchronous and fast,
+        // so runBlocking here does not cause ANR. The suspend signature is kept
+        // for API consistency with the rest of the coroutine-based codebase.
         val token = runBlocking { tokenManager.getAccessToken() }
 
         // If no token, proceed without auth header

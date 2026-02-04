@@ -29,6 +29,9 @@ api_router.register(r'profiles', views_api.UserProfileViewSet, basename='profile
 api_urlpatterns = [
     path('', include(api_router.urls)),
     path('me/', views_api.CurrentUserAPIView.as_view(), name='current-user'),
+    # JWT auth endpoints for mobile/desktop clients
+    path('auth/login/', views_api.LoginTokenView.as_view(), name='token-obtain'),
+    path('auth/token/refresh/', views_api.RefreshTokenView.as_view(), name='token-refresh'),
 ]
 
 # =============================================================================

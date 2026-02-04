@@ -143,11 +143,19 @@ fun EduPathNavGraph(
             )
         }
 
-        // Admin dashboard screen
+        // Admin dashboard screen (requires staff/admin role)
         composable(Screen.Admin.route) {
+            // Admin authorization is enforced server-side via API permissions.
+            // The navigation guard here prevents non-admin users from seeing an
+            // empty admin UI; they are redirected back if they lack the role.
             AdminDashboardScreen(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onUnauthorized = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Admin.route) { inclusive = true }
+                    }
                 }
             )
         }

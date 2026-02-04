@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 from .forms import UserProfileForm
 
@@ -63,8 +64,9 @@ def signup_view(request):
     return render(request, 'pages/signup.html')
 
 
+@require_POST
 def logout_view(request):
-    """Logout and redirect."""
+    """Logout and redirect — requires POST to prevent CSRF logout attacks."""
     logout(request)
     messages.info(request, 'You have been logged out.')
     return redirect('App:index')

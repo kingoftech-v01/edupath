@@ -11,7 +11,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotAllowed
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from .models import (
@@ -226,14 +227,29 @@ def privacy(request):
 # =============================================================================
 
 def contactus(request):
-    """Contact page with form handling."""
+    """Contact page with form handling and rate limiting."""
     if request.method == 'POST':
+        # Rate limit contact form submissions (max 3 per session per 10 minutes)
+        import time
+        contact_count = request.session.get('contact_submissions', 0)
+        last_contact = request.session.get('last_contact_time', 0)
+        now = time.time()
+
+        if now - last_contact > 600:
+            contact_count = 0
+
+        if contact_count >= 3:
+            messages.error(request, 'Too many submissions. Please wait before trying again.')
+            return render(request, 'pages/contactus.html', {'form': ContactForm()})
+
         form = ContactForm(request.POST)
         if form.is_valid():
             submission = form.save(commit=False)
             if request.user.is_authenticated:
                 submission.user = request.user
             submission.save()
+            request.session['contact_submissions'] = contact_count + 1
+            request.session['last_contact_time'] = now
             messages.success(request, 'Thank you for your message. We will get back to you soon.')
             return redirect('App:contactus')
         else:
@@ -252,24 +268,51 @@ def contactus(request):
 # =============================================================================
 
 def login_view(request):
-    """Login page."""
+    """Login page with rate limiting."""
     if request.user.is_authenticated:
         return redirect('App:index')
 
     if request.method == 'POST':
+        # Simple session-based rate limiting for login attempts
+        import time
+        login_attempts = request.session.get('login_attempts', 0)
+        last_attempt = request.session.get('last_login_attempt', 0)
+        now = time.time()
+
+        # Reset counter if more than 15 minutes since last attempt
+        if now - last_attempt > 900:
+            login_attempts = 0
+
+        if login_attempts >= 5:
+            messages.error(
+                request,
+                'Too many login attempts. Please wait 15 minutes before trying again.'
+            )
+            return render(request, 'pages/login.html', {'form': CustomAuthenticationForm()})
+
         form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
 
+            # Reset login attempts on success
+            request.session.pop('login_attempts', None)
+            request.session.pop('last_login_attempt', None)
+
             # Handle remember me
             if not form.cleaned_data.get('remember_me'):
                 request.session.set_expiry(0)
 
-            next_url = request.GET.get('next', 'App:index')
+            next_url = request.GET.get('next', '')
+            if not next_url or not url_has_allowed_host_and_scheme(
+                next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+            ):
+                next_url = 'App:index'
             messages.success(request, f'Welcome back, {user.get_full_name() or user.username}!')
             return redirect(next_url)
         else:
+            request.session['login_attempts'] = login_attempts + 1
+            request.session['last_login_attempt'] = now
             messages.error(request, 'Invalid username or password.')
     else:
         form = CustomAuthenticationForm()
@@ -286,9 +329,13 @@ def signup_view(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            messages.success(request, 'Account created successfully! Welcome to EduPath.')
-            return redirect('App:index')
+            user.is_active = False
+            user.save()
+            messages.success(
+                request,
+                'Account created! Please check your email to verify your account before logging in.'
+            )
+            return redirect('App:login')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
@@ -297,28 +344,18 @@ def signup_view(request):
     return render(request, 'pages/signup.html', {'form': form})
 
 
+@require_POST
 def logout_view(request):
-    """Logout handler."""
+    """Logout handler — requires POST to prevent CSRF logout attacks."""
     logout(request)
     messages.info(request, 'You have been logged out.')
     return redirect('App:index')
 
 
 def forgot_password(request):
-    """Password reset request page."""
-    if request.method == 'POST':
-        form = PasswordResetRequestForm(request.POST)
-        if form.is_valid():
-            # TODO: Implement actual email sending
-            messages.success(
-                request,
-                'If an account exists with that email, you will receive a password reset link.'
-            )
-            return redirect('App:login')
-    else:
-        form = PasswordResetRequestForm()
-
-    return render(request, 'pages/forgot-password.html', {'form': form})
+    """Password reset — delegates to allauth's built-in password reset."""
+    from django.shortcuts import redirect as _redirect
+    return _redirect('account_reset_password')
 
 
 # =============================================================================
@@ -346,6 +383,8 @@ def notFound(request):
 
 def htmx_course_list(request):
     """HTMX partial for filtered course listings."""
+    if not request.headers.get('HX-Request'):
+        return HttpResponseNotAllowed(['GET'], content=b'This endpoint requires an HTMX request.')
     courses = Course.objects.filter(is_active=True).select_related('category', 'instructor')
 
     # Apply filters

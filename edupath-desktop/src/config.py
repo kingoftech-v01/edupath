@@ -47,9 +47,22 @@ class Config:
     MIN_WINDOW_HEIGHT: int = 600
 
     def __post_init__(self):
-        """Create necessary directories."""
+        """Create necessary directories and validate configuration."""
         for directory in [self.APP_DIR, self.CACHE_DIR, self.DATA_DIR, self.LOG_DIR]:
             directory.mkdir(parents=True, exist_ok=True)
+
+        # Warn if API URL is not HTTPS in production
+        if (
+            not self.API_BASE_URL.startswith("https://")
+            and "localhost" not in self.API_BASE_URL
+            and "127.0.0.1" not in self.API_BASE_URL
+        ):
+            import warnings
+            warnings.warn(
+                f"API_BASE_URL ({self.API_BASE_URL}) is not using HTTPS. "
+                "This is insecure for non-local connections. Set EDUPATH_API_URL to an https:// URL.",
+                stacklevel=2,
+            )
 
 
 # Global config instance

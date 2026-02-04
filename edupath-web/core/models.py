@@ -2,9 +2,26 @@
 Core Models - Site configuration, Features, Contact, Statistics, Pricing.
 """
 
+import re
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.utils import timezone
+
+
+# Whitelist of CSS class name characters (letters, digits, hyphens, underscores,
+# slashes for Tailwind modifiers, colons, dots, brackets, spaces)
+_CSS_CLASS_RE = re.compile(r'^[a-zA-Z0-9\s\-_/:.\[\]]+$')
+
+
+def validate_css_classes(value):
+    """Validate that a string contains only safe CSS class names, not arbitrary HTML/JS."""
+    if value and not _CSS_CLASS_RE.match(value):
+        raise ValidationError(
+            'Only CSS class names are allowed (alphanumeric, hyphens, underscores, '
+            'slashes, colons, dots, brackets, spaces). No HTML tags or special characters.'
+        )
 
 
 class TimestampedModel(models.Model):
@@ -34,7 +51,8 @@ class Feature(TimestampedModel, OrderedModel):
     """Platform features displayed on homepage."""
     icon = models.CharField(
         max_length=100,
-        help_text="Icon class (e.g., iconoir-thumbs-up text-3xl)"
+        help_text="Icon class (e.g., iconoir-thumbs-up text-3xl)",
+        validators=[validate_css_classes],
     )
     title = models.CharField(max_length=255)
     desc = models.TextField()
@@ -96,12 +114,14 @@ class PricingPlan(TimestampedModel, OrderedModel):
     style = models.TextField(
         blank=True,
         help_text="CSS classes for the plan container",
-        default="group md:flex items-center justify-between p-6 rounded-lg shadow hover:shadow-md shadow-slate-100 dark:shadow-slate-800 transition-all duration-500"
+        default="group md:flex items-center justify-between p-6 rounded-lg shadow hover:shadow-md shadow-slate-100 dark:shadow-slate-800 transition-all duration-500",
+        validators=[validate_css_classes],
     )
     button_style = models.TextField(
         blank=True,
         help_text="CSS classes for button",
-        default="h-8 px-3 tracking-wide inline-flex items-center justify-center font-medium rounded-md bg-violet-600 text-white text-sm md:mt-0 mt-4"
+        default="h-8 px-3 tracking-wide inline-flex items-center justify-center font-medium rounded-md bg-violet-600 text-white text-sm md:mt-0 mt-4",
+        validators=[validate_css_classes],
     )
 
     # Features list
@@ -117,7 +137,7 @@ class PricingPlan(TimestampedModel, OrderedModel):
 
 class ContactInfo(TimestampedModel, OrderedModel):
     """Contact information entries."""
-    icon = models.CharField(max_length=100, help_text="Icon class")
+    icon = models.CharField(max_length=100, help_text="Icon class", validators=[validate_css_classes])
     name = models.CharField(max_length=100, help_text="e.g., Phone, Email, Location")
     title = models.TextField(help_text="Description text")
     info = models.CharField(max_length=255, help_text="Contact value")

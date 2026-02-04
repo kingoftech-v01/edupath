@@ -1,14 +1,25 @@
 """
-Accounts API Views - Profile and user API endpoints.
+Accounts API Views - Profile, user, and JWT auth API endpoints.
 """
 
 from rest_framework import viewsets, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .models import UserProfile
 from .serializers import UserProfileSerializer, UserSerializer
+
+
+class LoginTokenView(TokenObtainPairView):
+    """JWT login endpoint for mobile/desktop clients."""
+    permission_classes = [permissions.AllowAny]
+
+
+class RefreshTokenView(TokenRefreshView):
+    """JWT token refresh endpoint for mobile/desktop clients."""
+    permission_classes = [permissions.AllowAny]
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -25,6 +36,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['list', 'destroy']:
+            return [permissions.IsAdminUser()]
+        if self.action == 'retrieve':
             return [permissions.IsAdminUser()]
         return [permissions.IsAuthenticated()]
 

@@ -80,6 +80,9 @@ class CourseListSerializer(serializers.ModelSerializer):
 
     def get_src(self, obj):
         if obj.video_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.video_file.url)
             return obj.video_file.url
         return ""
 
@@ -136,6 +139,16 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ['course', 'desc', 'rating']
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            course = attrs.get('course')
+            if course and Review.objects.filter(user=request.user, course=course).exists():
+                raise serializers.ValidationError(
+                    'You have already submitted a review for this course.'
+                )
+        return attrs
 
     def create(self, validated_data):
         request = self.context.get('request')

@@ -1,11 +1,10 @@
 # from django.shortcuts import render , redirect
 from django.shortcuts import render, get_object_or_404
-# for form 
+# for form
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from .models import Course
 from .models import Blog
-import re
 
 # Create your views here.
 

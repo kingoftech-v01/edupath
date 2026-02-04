@@ -3,6 +3,7 @@ Core API Views - REST API endpoints for core functionality.
 """
 
 from rest_framework import viewsets, status, permissions
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count, Q
@@ -69,6 +70,8 @@ class ContactSubmissionAPIView(APIView):
     POST /core/api/v1/contact/
     """
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'contact'
 
     def post(self, request):
         serializer = ContactSubmissionSerializer(

@@ -8,6 +8,7 @@ import com.edupath.data.local.entities.CourseEntity
 import com.edupath.domain.model.Category
 import com.edupath.domain.model.Course
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -216,9 +217,13 @@ class CourseRepositoryImpl @Inject constructor(
             } else emptyList()
         } catch (e: Exception) {
             // Fall back to local search
-            courseDao.searchCourses(query).map { entities ->
-                entities.map { it.toDomain() }
-            }.toString().let { emptyList() }
+            try {
+                courseDao.searchCourses(query)
+                    .map { entities -> entities.map { it.toDomain() } }
+                    .first()
+            } catch (e2: Exception) {
+                emptyList()
+            }
         }
     }
 

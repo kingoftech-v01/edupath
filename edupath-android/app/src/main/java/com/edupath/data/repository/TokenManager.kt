@@ -1,45 +1,53 @@
 package com.edupath.data.repository
 
 import android.content.Context
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val Context.dataStore by preferencesDataStore(name = "auth_prefs")
-
 /**
- * Manages JWT authentication tokens using DataStore.
+ * Manages JWT authentication tokens using EncryptedSharedPreferences.
  *
- * This class provides secure storage and retrieval of access and refresh
- * tokens for API authentication. Tokens are persisted in an encrypted
- * DataStore and survive app restarts.
+ * Tokens are stored encrypted at rest using Android Keystore-backed keys,
+ * protecting them even on rooted devices or when backups are extracted.
  *
- * @property context Application context for DataStore access
+ * @property context Application context for storage access
  */
 @Singleton
 class TokenManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     companion object {
-        private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
-        private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
+        private const val PREFS_NAME = "auth_encrypted_prefs"
+        private const val ACCESS_TOKEN_KEY = "access_token"
+        private const val REFRESH_TOKEN_KEY = "refresh_token"
+    }
+
+    private val prefs: SharedPreferences by lazy {
+        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+        EncryptedSharedPreferences.create(
+            PREFS_NAME,
+            masterKeyAlias,
+            context,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
     }
 
     /**
-     * Saves authentication tokens to secure storage.
+     * Saves authentication tokens to encrypted storage.
      *
      * @param accessToken The JWT access token for API requests
      * @param refreshToken The JWT refresh token (optional)
      */
     suspend fun saveTokens(accessToken: String, refreshToken: String?) {
-        context.dataStore.edit { prefs ->
-            prefs[ACCESS_TOKEN_KEY] = accessToken
-            refreshToken?.let { prefs[REFRESH_TOKEN_KEY] = it }
+        prefs.edit().apply {
+            putString(ACCESS_TOKEN_KEY, accessToken)
+            refreshToken?.let { putString(REFRESH_TOKEN_KEY, it) }
+            apply()
         }
     }
 
@@ -49,9 +57,7 @@ class TokenManager @Inject constructor(
      * @return The access token or null if not stored
      */
     suspend fun getAccessToken(): String? {
-        return context.dataStore.data.map { prefs ->
-            prefs[ACCESS_TOKEN_KEY]
-        }.first()
+        return prefs.getString(ACCESS_TOKEN_KEY, null)
     }
 
     /**
@@ -60,18 +66,17 @@ class TokenManager @Inject constructor(
      * @return The refresh token or null if not stored
      */
     suspend fun getRefreshToken(): String? {
-        return context.dataStore.data.map { prefs ->
-            prefs[REFRESH_TOKEN_KEY]
-        }.first()
+        return prefs.getString(REFRESH_TOKEN_KEY, null)
     }
 
     /**
      * Clears all stored tokens (logout).
      */
     suspend fun clearTokens() {
-        context.dataStore.edit { prefs ->
-            prefs.remove(ACCESS_TOKEN_KEY)
-            prefs.remove(REFRESH_TOKEN_KEY)
+        prefs.edit().apply {
+            remove(ACCESS_TOKEN_KEY)
+            remove(REFRESH_TOKEN_KEY)
+            apply()
         }
     }
 

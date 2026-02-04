@@ -25,12 +25,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY SETTINGS
 # =============================================================================
 
-# SECURITY: Load secret key from environment variable
+# SECURITY: Load secret key from environment variable (REQUIRED — no insecure default)
 # Generate new key: python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-SECRET_KEY = config(
-    'SECRET_KEY',
-    default='django-insecure-change-me-in-production'
-)
+try:
+    SECRET_KEY = config('SECRET_KEY')
+except Exception:
+    raise RuntimeError(
+        "SECRET_KEY environment variable is not set. "
+        "Generate one with: python -c \"from django.core.management.utils import "
+        "get_random_secret_key; print(get_random_secret_key())\""
+    )
 
 # SECURITY: Debug mode - MUST be False in production
 DEBUG = config('DEBUG', default=False, cast=bool)
@@ -58,7 +62,8 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'rest_framework',
-    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'corsheaders',
     'dbbackup',
@@ -74,13 +79,13 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount.providers.google',
     # 'allauth.socialaccount.providers.github',
 
-    # Local apps (new multi-app architecture)
+    # Local apps (multi-app architecture)
     'accounts.apps.AccountsConfig',
     'courses.apps.CoursesConfig',
     'blog.apps.BlogConfig',
     'core.apps.CoreConfig',
 
-    # Legacy app (keeping for backward compatibility with templates)
+    # Legacy app (kept for template compatibility; models are in per-app modules)
     'App',
 ]
 
@@ -126,22 +131,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 
-                # Custom context processors (from core app)
-                'core.context_processors.global_business_data',
-                'core.context_processors.site_config',
+                # Custom context processors (from core app — cached)
+                'core.context_processors.global_context',
                 'core.context_processors.user_info',
-                'core.context_processors.global_features',
-                'core.context_processors.global_courses',
-                'core.context_processors.global_instructors',
-                'core.context_processors.global_blogs',
-                'core.context_processors.global_categories',
-                'core.context_processors.global_ctas',
-                'core.context_processors.global_reviews',
-                'core.context_processors.global_courses1',
-                'core.context_processors.global_courses2',
-                'core.context_processors.global_courses3',
-                'core.context_processors.global_pages',
-                'core.context_processors.global_contacts',
             ],
         },
     },
@@ -208,7 +200,7 @@ AUTHENTICATION_BACKENDS = [
 # Allauth configuration (updated for allauth 65+)
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
-ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Change to 'mandatory' in production
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -298,7 +290,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -310,10 +302,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 12,
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    ],
+    'DEFAULT_RENDERER_CLASSES': (
+        ['rest_framework.renderers.JSONRenderer', 'rest_framework.renderers.BrowsableAPIRenderer']
+        if DEBUG else
+        ['rest_framework.renderers.JSONRenderer']
+    ),
     # Rate limiting
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
@@ -322,7 +315,18 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '100/hour',
         'user': '1000/hour',
+        'login': '5/minute',
+        'contact': '3/minute',
     },
+}
+
+# JWT Configuration (for mobile/desktop clients)
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
 # =============================================================================
@@ -403,7 +407,8 @@ if CELERY_BROKER_URL:
 
 TAILWIND_APP_NAME = 'theme'
 INTERNAL_IPS = ["127.0.0.1"]
-NPM_BIN_PATH = config('NPM_BIN_PATH', default=r"C:\Program Files\nodejs\npm.cmd")
+import shutil
+NPM_BIN_PATH = config('NPM_BIN_PATH', default=shutil.which('npm') or 'npm')
 
 # =============================================================================
 # DATABASE BACKUP CONFIGURATION

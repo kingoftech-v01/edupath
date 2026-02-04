@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.http import require_POST
 
 from .models import Category, Instructor, Course, Review
@@ -197,6 +197,8 @@ def category_detail(request, slug):
 
 def htmx_course_list(request):
     """HTMX partial for filtered course listings."""
+    if not request.headers.get('HX-Request'):
+        return HttpResponseNotAllowed(['GET'], content=b'This endpoint requires an HTMX request.')
     courses = Course.objects.filter(is_active=True).select_related('category', 'instructor')
 
     category = request.GET.get('category')

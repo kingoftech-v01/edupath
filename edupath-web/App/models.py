@@ -9,10 +9,15 @@ This module defines all database models including:
 - SiteConfiguration (global settings - singleton)
 """
 
+from decimal import Decimal
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.utils import timezone
+
+from courses.models import validate_video_file, _generate_unique_slug
 
 
 # ============================================================================
@@ -62,7 +67,7 @@ class Category(TimestampedModel, OrderedModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = _generate_unique_slug(Category, self.name, self)
         super().save(*args, **kwargs)
 
     @property
@@ -109,7 +114,7 @@ class Instructor(TimestampedModel, OrderedModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = _generate_unique_slug(Instructor, self.name, self)
         super().save(*args, **kwargs)
 
 
@@ -133,7 +138,9 @@ class Course(TimestampedModel, OrderedModel):
     img = models.ImageField(upload_to='course_images/')
     img1 = models.ImageField(upload_to='course_instructors/', blank=True, help_text="Instructor image for course card")
     video_url = models.URLField(blank=True, help_text="YouTube embed URL")
-    video_file = models.FileField(upload_to='course_videos/', blank=True)
+    video_file = models.FileField(
+        upload_to='course_videos/', blank=True, validators=[validate_video_file]
+    )
 
     # Statistics
     lessons = models.PositiveIntegerField(default=0)
@@ -168,8 +175,8 @@ class Course(TimestampedModel, OrderedModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
-        self.is_free = self.price == 0
+            self.slug = _generate_unique_slug(Course, self.title, self)
+        self.is_free = self.price <= Decimal('0')
         # Auto-fill name from instructor if not set
         if not self.name and self.instructor:
             self.name = self.instructor.name
@@ -232,7 +239,7 @@ class Blog(TimestampedModel, OrderedModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = _generate_unique_slug(Blog, self.title, self)
         super().save(*args, **kwargs)
 
 

@@ -38,9 +38,18 @@ class CacheService:
         self.expiry_hours = expiry_hours
 
         # Initialize database
+        # Note: SQLite file is not encrypted. Restrict file permissions to owner-only.
         self.engine = create_engine(f"sqlite:///{db_path}")
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
+
+        # Restrict database file permissions (owner read/write only)
+        import os
+        import stat
+        try:
+            os.chmod(db_path, stat.S_IRUSR | stat.S_IWUSR)
+        except OSError:
+            pass  # Best effort — may fail on some platforms
 
     def _get_session(self):
         """Get database session."""

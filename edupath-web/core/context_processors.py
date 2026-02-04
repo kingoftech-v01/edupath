@@ -1,149 +1,121 @@
 """
 Core Context Processors - Global template context from database.
 
-Provides global template context using database models.
-Maintains the same variable names for template compatibility.
+Consolidates all context processors into a single cached function to avoid
+running ~15 separate database queries on every request.
 """
 
+from django.core.cache import cache
 from django.db.models import Count, Q
 
 
-def global_business_data(request):
-    """Business partner logos from database."""
-    from .models import BusinessPartner
-    business = BusinessPartner.objects.filter(is_active=True)
-    return {'business': business}
+CONTEXT_CACHE_KEY = 'global_template_context'
+CONTEXT_CACHE_TIMEOUT = 300  # 5 minutes
 
 
-def global_features(request):
-    """Platform features from database."""
-    from .models import Feature
-    features = Feature.objects.filter(is_active=True)
-    return {'features': features}
+def _build_global_context():
+    """Build the full global context from database (called on cache miss)."""
+    from .models import (
+        BusinessPartner, Feature, SiteStatistic, PricingPlan,
+        ContactInfo, SiteConfiguration,
+    )
+    from courses.models import Course, Instructor, Category, Review
+    from blog.models import Blog
 
-
-def global_ctas(request):
-    """Site statistics from database (CTA counters)."""
-    from .models import SiteStatistic
-    ctas = SiteStatistic.objects.filter(is_active=True)
-    return {'ctas': ctas}
-
-
-def global_pages(request):
-    """Pricing plans from database."""
-    from .models import PricingPlan
-    pages = PricingPlan.objects.filter(is_active=True)
-    return {'pages': pages}
-
-
-def global_contacts(request):
-    """Contact information from database."""
-    from .models import ContactInfo
-    contacts = ContactInfo.objects.filter(is_active=True)
-    return {'contacts': contacts}
-
-
-def site_config(request):
-    """Site-wide configuration from database."""
-    from .models import SiteConfiguration
+    # Site config (singleton)
     try:
         config = SiteConfiguration.get_solo()
-        return {
+        site_context = {
             'site_name': config.site_name,
             'site_config': config,
             'copyright_year': config.copyright_text or '2024',
         }
     except Exception:
-        return {
+        site_context = {
             'site_name': 'EduPath',
             'site_config': None,
             'copyright_year': '2024',
         }
 
+    # Bulk queries
+    business = list(BusinessPartner.objects.filter(is_active=True))
+    features = list(Feature.objects.filter(is_active=True))
+    ctas = list(SiteStatistic.objects.filter(is_active=True))
+    pages = list(PricingPlan.objects.filter(is_active=True))
+    contacts = list(ContactInfo.objects.filter(is_active=True))
 
-def global_courses(request):
-    """Courses from database with selected course handling."""
-    from courses.models import Course
-    courses = Course.objects.filter(is_active=True).select_related('category', 'instructor')
+    courses_qs = Course.objects.filter(is_active=True).select_related('category', 'instructor')
+    courses = list(courses_qs)
+    instructors = list(Instructor.objects.filter(is_active=True))
+    categories = list(Category.objects.filter(is_active=True).annotate(
+        course_count=Count('courses', filter=Q(courses__is_active=True))
+    ))
+    reviews = list(Review.objects.filter(is_active=True))
+    blogs = list(Blog.objects.filter(is_active=True).select_related('author'))
+
+    courses1 = [c for c in courses if c.video_url]
+    courses2 = [c for c in courses if c.video_file]
+    courses3 = [c for c in courses if c.is_featured][:3]
+
+    ctx = {
+        **site_context,
+        'business': business,
+        'features': features,
+        'ctas': ctas,
+        'pages': pages,
+        'contacts': contacts,
+        'courses': courses,
+        'instructors': instructors,
+        'categories': categories,
+        'reviews': reviews,
+        'blogs': blogs,
+        'courses1': courses1,
+        'courses2': courses2,
+        'courses3': courses3,
+    }
+    return ctx
+
+
+def global_context(request):
+    """
+    Single cached context processor replacing 15 individual ones.
+
+    Caches database results for CONTEXT_CACHE_TIMEOUT seconds, with per-request
+    additions for selected_course/selected_blog and user info.
+    """
+    ctx = cache.get(CONTEXT_CACHE_KEY)
+    if ctx is None:
+        ctx = _build_global_context()
+        cache.set(CONTEXT_CACHE_KEY, ctx, CONTEXT_CACHE_TIMEOUT)
+
+    # Per-request additions (not cached)
+    result = dict(ctx)
 
     course_id = request.GET.get('course_id')
-    selected_course = None
-
     if course_id:
         try:
             course_id = int(course_id)
-            selected_course = courses.filter(id=course_id).first()
+            result['selected_course'] = next(
+                (c for c in result['courses'] if c.id == course_id), None
+            )
         except (TypeError, ValueError):
-            selected_course = None
-
-    return {'courses': courses, 'selected_course': selected_course}
-
-
-def global_instructors(request):
-    """Instructors from database."""
-    from courses.models import Instructor
-    instructors = Instructor.objects.filter(is_active=True)
-    return {'instructors': instructors}
-
-
-def global_categories(request):
-    """Categories from database with course counts."""
-    from courses.models import Category
-    categories = Category.objects.filter(is_active=True).annotate(
-        course_count=Count('courses', filter=Q(courses__is_active=True))
-    )
-    return {'categories': categories}
-
-
-def global_reviews(request):
-    """Reviews from database."""
-    from courses.models import Review
-    reviews = Review.objects.filter(is_active=True)
-    return {'reviews': reviews}
-
-
-def global_blogs(request):
-    """Blogs from database with selected blog handling."""
-    from blog.models import Blog
-    blogs = Blog.objects.filter(is_active=True).select_related('author')
+            result['selected_course'] = None
+    else:
+        result['selected_course'] = None
 
     blog_id = request.GET.get('blog_id')
-    selected_blog = None
-
     if blog_id:
         try:
             blog_id = int(blog_id)
-            selected_blog = blogs.filter(id=blog_id).first()
+            result['selected_blog'] = next(
+                (b for b in result['blogs'] if b.id == blog_id), None
+            )
         except (TypeError, ValueError):
-            selected_blog = None
+            result['selected_blog'] = None
+    else:
+        result['selected_blog'] = None
 
-    return {'blogs': blogs, 'selected_blog': selected_blog}
-
-
-def global_courses1(request):
-    """YouTube video courses from database."""
-    from courses.models import Course
-    courses1 = Course.objects.filter(
-        is_active=True,
-    ).exclude(video_url='').exclude(video_url__isnull=True).select_related('instructor')
-    return {'courses1': courses1}
-
-
-def global_courses2(request):
-    """Local video courses from database."""
-    from courses.models import Course
-    courses2 = Course.objects.filter(
-        is_active=True,
-        video_file__isnull=False
-    ).exclude(video_file='').select_related('instructor')
-    return {'courses2': courses2}
-
-
-def global_courses3(request):
-    """Featured courses subset from database (3 courses)."""
-    from courses.models import Course
-    courses3 = Course.objects.filter(is_active=True, is_featured=True)[:3]
-    return {'courses3': courses3}
+    return result
 
 
 def user_info(request):
