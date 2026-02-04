@@ -187,6 +187,17 @@ class TestCourse:
         assert course.instructor == instructor
         assert course in instructor.courses.all()
 
+    def test_course_src_with_video_file(self, db):
+        """Test src property returns video_file URL when set."""
+        from courses.models import Course
+        course = Course.objects.create(
+            title='Video Course',
+            slug='video-course',
+            desc='Test',
+            video_file='course_videos/test.mp4'
+        )
+        assert course.src == '/media/course_videos/test.mp4'
+
 
 @pytest.mark.django_db
 class TestReview:

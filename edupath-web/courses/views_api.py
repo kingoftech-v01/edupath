@@ -37,9 +37,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ['order']
 
     def get_queryset(self):
-        return Category.objects.filter(is_active=True).annotate(
-            course_count=Count('courses', filter=Q(courses__is_active=True))
-        )
+        return Category.objects.filter(is_active=True)
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

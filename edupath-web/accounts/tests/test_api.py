@@ -41,13 +41,19 @@ class TestUserProfileViewSet:
         """Test that /me/ endpoint requires authentication."""
         url = '/accounts/api/v1/profiles/me/'
         response = api_client.get(url)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_profile_retrieve(self, authenticated_client, user):
         """Test retrieving own profile by id."""
         url = f'/accounts/api/v1/profiles/{user.profile.pk}/'
         response = authenticated_client.get(url)
         assert response.status_code == status.HTTP_200_OK
+
+    def test_profile_me_patch_invalid(self, authenticated_client, user):
+        """Test updating profile with invalid data returns 400."""
+        url = '/accounts/api/v1/profiles/me/'
+        response = authenticated_client.patch(url, {'website': 'not-a-url'}, format='json')
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.django_db
@@ -65,4 +71,4 @@ class TestCurrentUserAPIView:
         """Test that endpoint requires authentication."""
         url = '/accounts/api/v1/me/'
         response = api_client.get(url)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN

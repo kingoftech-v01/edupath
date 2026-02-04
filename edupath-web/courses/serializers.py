@@ -116,6 +116,9 @@ class CourseCreateUpdateSerializer(serializers.ModelSerializer):
             'price', 'lessons', 'students', 'duration_hours',
             'category', 'instructor', 'is_featured', 'is_event', 'is_active', 'order'
         ]
+        extra_kwargs = {
+            'img': {'required': False},
+        }
 
 
 # =============================================================================

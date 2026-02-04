@@ -14,7 +14,7 @@ class TestContactWorkflow:
 
     def test_anonymous_contact_submission(self, client):
         """Test anonymous user can submit contact form."""
-        response = client.post('/contactus/', {
+        response = client.post('/core/contact/', {
             'name': 'Anonymous User',
             'email': 'anon@example.com',
             'subject': 'Question',
@@ -28,7 +28,7 @@ class TestContactWorkflow:
 
     def test_authenticated_contact_submission(self, logged_in_client, user):
         """Test authenticated user contact form links to user."""
-        response = logged_in_client.post('/contactus/', {
+        response = logged_in_client.post('/core/contact/', {
             'name': 'Test User',
             'email': 'test@example.com',
             'subject': 'Feedback',
@@ -56,7 +56,7 @@ class TestContactWorkflow:
     def test_contact_validation_workflow(self, client):
         """Test contact form validation prevents invalid submissions."""
         # Try invalid submission
-        response = client.post('/contactus/', {
+        response = client.post('/core/contact/', {
             'name': 'Test',
             'email': 'invalid-email',
             'subject': '',

@@ -132,9 +132,7 @@ class HomepageDataAPIView(APIView):
                 BusinessPartner.objects.filter(is_active=True), many=True
             ).data,
             'categories': CategoryListSerializer(
-                Category.objects.filter(is_active=True).annotate(
-                    course_count=Count('courses', filter=Q(courses__is_active=True))
-                ), many=True
+                Category.objects.filter(is_active=True), many=True
             ).data,
             'featured_courses': CourseListSerializer(
                 Course.objects.filter(is_active=True, is_featured=True)[:6], many=True

@@ -55,3 +55,14 @@ class TestUserProfile:
 
         profile.refresh_from_db()
         assert profile.bio == 'Updated bio'
+
+    def test_save_user_without_profile(self, user, db):
+        """Test that saving user without profile doesn't raise."""
+        UserProfile.objects.filter(user=user).delete()
+        try:
+            del user.profile
+        except AttributeError:
+            pass
+        # This should not raise even without a profile
+        user.first_name = 'Updated'
+        user.save()

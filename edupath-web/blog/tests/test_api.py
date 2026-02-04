@@ -71,4 +71,4 @@ class TestBlogViewSet:
         url = f'/blog/api/v1/posts/{blog.slug}/'
         response = api_client.get(url)
         assert response.status_code == status.HTTP_200_OK
-        assert 'author' in response.data
+        assert 'author_name' in response.data

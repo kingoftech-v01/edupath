@@ -97,6 +97,6 @@ class TestAuthenticationViews:
 
     def test_password_reset_view_get(self, client):
         """Test password reset page GET request."""
-        url = '/accounts/password-reset/'
+        url = '/accounts/password/reset/'
         response = client.get(url)
         assert response.status_code == 200

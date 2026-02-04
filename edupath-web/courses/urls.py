@@ -44,22 +44,22 @@ frontend_urlpatterns = [
     path('youtube/', views_frontend.youtube_listing, name='youtube_listing'),
     path('video/', views_frontend.video_listing, name='video_listing'),
 
-    # Course detail
-    path('<slug:slug>/', views_frontend.course_detail, name='course_detail'),
-    path('detail/<int:course_id>/', views_frontend.course_detail_by_id, name='course_detail_by_id'),
-    path('detail-two/<int:course_id>/', views_frontend.course_detail_two, name='course_detail_two'),
-
-    # Instructors
+    # Instructors (must be before slug pattern)
     path('instructors/', views_frontend.instructor_list, name='instructor_list'),
     path('instructors/<slug:slug>/', views_frontend.instructor_detail, name='instructor_detail'),
 
-    # Categories
+    # Categories (must be before slug pattern)
     path('categories/', views_frontend.category_list, name='category_list'),
     path('categories/<slug:slug>/', views_frontend.category_detail, name='category_detail'),
 
     # HTMX partials
     path('htmx/course-list/', views_frontend.htmx_course_list, name='htmx_course_list'),
     path('htmx/review/<int:course_id>/', views_frontend.htmx_submit_review, name='htmx_submit_review'),
+
+    # Course detail (slug pattern must be last to avoid catching other paths)
+    path('detail/<int:course_id>/', views_frontend.course_detail_by_id, name='course_detail_by_id'),
+    path('detail-two/<int:course_id>/', views_frontend.course_detail_two, name='course_detail_two'),
+    path('<slug:slug>/', views_frontend.course_detail, name='course_detail'),
 ]
 
 # =============================================================================

@@ -70,6 +70,30 @@ class TestCourseListViews:
         response = client.get(url)
         assert response.status_code == 200
 
+    def test_list_view(self, client):
+        """Test list view page."""
+        url = '/courses/list/'
+        response = client.get(url)
+        assert response.status_code == 200
+
+    def test_list_sidebar_view(self, client):
+        """Test list with sidebar view."""
+        url = '/courses/list-sidebar/'
+        response = client.get(url)
+        assert response.status_code == 200
+
+    def test_youtube_listing_view(self, client):
+        """Test YouTube listing view."""
+        url = '/courses/youtube/'
+        response = client.get(url)
+        assert response.status_code == 200
+
+    def test_video_listing_view(self, client):
+        """Test video listing view."""
+        url = '/courses/video/'
+        response = client.get(url)
+        assert response.status_code == 200
+
 
 @pytest.mark.django_db
 class TestCourseDetailViews:
@@ -113,6 +137,12 @@ class TestCourseDetailViews:
         url = '/courses/invalid-slug/'
         response = client.get(url)
         assert response.status_code == 404
+
+    def test_course_detail_two(self, client, course):
+        """Test alternative course detail page."""
+        url = f'/courses/detail-two/{course.pk}/'
+        response = client.get(url)
+        assert response.status_code == 200
 
 
 @pytest.mark.django_db
@@ -164,13 +194,13 @@ class TestHtmxViews:
 
     def test_htmx_course_list(self, client, course):
         """Test HTMX course list endpoint."""
-        url = '/courses/htmx/courses/'
+        url = '/courses/htmx/course-list/'
         response = client.get(url)
         assert response.status_code == 200
 
     def test_htmx_course_list_filter(self, client, course, category):
         """Test HTMX course list with filters."""
-        url = f'/courses/htmx/courses/?category={category.slug}'
+        url = f'/courses/htmx/course-list/?category={category.slug}'
         response = client.get(url)
         assert response.status_code == 200
 
@@ -193,3 +223,20 @@ class TestHtmxViews:
         assert response.status_code == 200
         data = response.json()
         assert data['success'] is True
+
+    def test_htmx_course_list_search(self, client, course):
+        """Test HTMX course list with search filter."""
+        url = '/courses/htmx/course-list/?search=Test'
+        response = client.get(url)
+        assert response.status_code == 200
+
+    def test_htmx_submit_review_invalid_form(self, logged_in_client, course):
+        """Test HTMX review submission with invalid form data."""
+        url = f'/courses/htmx/review/{course.pk}/'
+        response = logged_in_client.post(url, {
+            'desc': '',
+            'rating': ''
+        })
+        assert response.status_code == 400
+        data = response.json()
+        assert data['success'] is False

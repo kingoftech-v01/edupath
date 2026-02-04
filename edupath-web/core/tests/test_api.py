@@ -23,7 +23,7 @@ class TestBusinessPartnerViewSet:
 
     def test_business_partner_list(self, api_client, business_partner):
         """Test listing business partners."""
-        url = '/core/api/v1/partners/'
+        url = '/core/api/v1/business-partners/'
         response = api_client.get(url)
         assert response.status_code == status.HTTP_200_OK
 
@@ -45,7 +45,7 @@ class TestPricingPlanViewSet:
 
     def test_pricing_plan_list(self, api_client, pricing_plan):
         """Test listing pricing plans."""
-        url = '/core/api/v1/pricing/'
+        url = '/core/api/v1/pricing-plans/'
         response = api_client.get(url)
         assert response.status_code == status.HTTP_200_OK
 
@@ -99,6 +99,21 @@ class TestContactSubmissionAPIView:
         }
         response = api_client.post(url, data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_contact_submission_authenticated_links_user(self, authenticated_client, user):
+        """Test that authenticated user is linked to contact submission."""
+        url = '/core/api/v1/contact/'
+        data = {
+            'name': 'Auth User',
+            'email': 'auth@example.com',
+            'subject': 'Auth Test',
+            'message': 'Testing with auth'
+        }
+        response = authenticated_client.post(url, data)
+        assert response.status_code == status.HTTP_201_CREATED
+        from core.models import ContactSubmission
+        submission = ContactSubmission.objects.get(email='auth@example.com')
+        assert submission.user == user
 
 
 @pytest.mark.django_db

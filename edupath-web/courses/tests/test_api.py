@@ -207,7 +207,7 @@ class TestReviewViewSet:
             'course': course.pk
         }
         response = api_client.post(url, data)
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_review_create_authenticated(self, authenticated_client, course):
         """Test creating review when authenticated."""
@@ -244,3 +244,47 @@ class TestReviewViewSet:
         url = f'/courses/api/v1/reviews/{review.pk}/'
         response = authenticated_client.delete(url)
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_review_create_sets_user_name(self, authenticated_client, course, user):
+        """Test that creating a review sets user and name from authenticated user."""
+        url = '/courses/api/v1/reviews/'
+        response = authenticated_client.post(url, {
+            'desc': 'Another review',
+            'rating': 4,
+            'course': course.pk
+        })
+        assert response.status_code == status.HTTP_201_CREATED
+        from courses.models import Review
+        review = Review.objects.get(desc='Another review')
+        assert review.user == user
+        assert review.name == user.get_full_name() or user.username
+
+    def test_review_serializer_create_without_request(self, course, db):
+        """Test ReviewCreateSerializer.create() without request context."""
+        from courses.serializers import ReviewCreateSerializer
+        serializer = ReviewCreateSerializer(data={
+            'desc': 'No request review',
+            'rating': 3,
+            'course': course.pk
+        })
+        assert serializer.is_valid()
+        review = serializer.save()
+        assert review.user is None
+
+    def test_course_list_with_video_file(self, api_client, category, instructor, db):
+        """Test course listing includes src from video_file."""
+        Course.objects.create(
+            title='Video Course',
+            slug='video-course-api',
+            desc='Test',
+            category=category,
+            instructor=instructor,
+            video_file='course_videos/test.mp4',
+            is_active=True
+        )
+        url = '/courses/api/v1/courses/'
+        response = api_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        video_courses = [c for c in response.data['results'] if c['slug'] == 'video-course-api']
+        assert len(video_courses) == 1
+        assert video_courses[0]['src'] != ''

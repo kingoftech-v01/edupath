@@ -52,14 +52,14 @@ def profile_edit(request):
 def login_view(request):
     """Login page - renders custom template with allauth."""
     if request.user.is_authenticated:
-        return redirect('App:index')
+        return redirect('/')
     return render(request, 'pages/login.html')
 
 
 def signup_view(request):
     """Signup page - renders custom template with allauth."""
     if request.user.is_authenticated:
-        return redirect('App:index')
+        return redirect('/')
     return render(request, 'pages/signup.html')
 
 
@@ -67,7 +67,7 @@ def logout_view(request):
     """Logout and redirect."""
     logout(request)
     messages.info(request, 'You have been logged out.')
-    return redirect('App:index')
+    return redirect('/')
 
 
 def password_reset_view(request):
