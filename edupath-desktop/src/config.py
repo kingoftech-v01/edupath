@@ -17,7 +17,12 @@ load_dotenv()
 
 @dataclass
 class Config:
-    """Application configuration."""
+    """
+    Application configuration.
+
+    Manages all settings including API endpoints, paths, cache,
+    and UI dimensions. Creates necessary directories on init.
+    """
 
     # API Settings
     API_BASE_URL: str = os.getenv("EDUPATH_API_URL", "http://localhost:8000")
@@ -47,7 +52,12 @@ class Config:
     MIN_WINDOW_HEIGHT: int = 600
 
     def __post_init__(self):
-        """Create necessary directories."""
+        """
+        Create necessary directories.
+
+        Ensures app, cache, data, and log directories exist.
+        Called automatically after dataclass initialization.
+        """
         for directory in [self.APP_DIR, self.CACHE_DIR, self.DATA_DIR, self.LOG_DIR]:
             directory.mkdir(parents=True, exist_ok=True)
 
@@ -58,7 +68,12 @@ config = Config()
 
 # API Endpoints
 class Endpoints:
-    """API endpoint URLs."""
+    """
+    API endpoint URLs.
+
+    Contains all REST API endpoint paths for the EduPath backend.
+    Grouped by feature: auth, user, courses, blog, core.
+    """
 
     # Authentication
     AUTH_LOGIN = "/accounts/api/v1/auth/login/"

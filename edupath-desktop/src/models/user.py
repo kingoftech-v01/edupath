@@ -10,7 +10,11 @@ from pydantic import BaseModel, EmailStr
 
 
 class User(BaseModel):
-    """User model."""
+    """
+    User model.
+
+    Represents an authenticated user with account details.
+    """
 
     id: int
     username: str
@@ -23,13 +27,22 @@ class User(BaseModel):
 
     @property
     def full_name(self) -> str:
-        """Get user's full name."""
+        """
+        Get user's full name.
+
+        Returns:
+            str: Full name or username if name is empty.
+        """
         name = f"{self.first_name} {self.last_name}".strip()
         return name or self.username
 
 
 class UserProfile(BaseModel):
-    """User profile model."""
+    """
+    User profile model.
+
+    Extended user information including bio and social links.
+    """
 
     id: int
     user: int

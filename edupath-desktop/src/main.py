@@ -21,9 +21,20 @@ from ui.main_window import MainWindow
 
 
 class EduPathApp:
-    """Main application class."""
+    """
+    Main application class.
+
+    Initializes PyQt6 application, services, and main window.
+    Manages application lifecycle and resource cleanup.
+    """
 
     def __init__(self):
+        """
+        Initialize the application.
+
+        Sets up PyQt6 application, creates service instances,
+        and initializes the main window.
+        """
         self.app = QApplication(sys.argv)
         self.app.setApplicationName(config.APP_NAME)
         self.app.setApplicationVersion(config.APP_VERSION)
@@ -50,7 +61,12 @@ class EduPathApp:
         self._load_styles()
 
     def _load_styles(self):
-        """Load QSS stylesheet."""
+        """
+        Load QSS stylesheet from resources.
+
+        Applies custom Qt styling from theme.qss file.
+        Fails silently if stylesheet not found.
+        """
         try:
             style_path = config.APP_DIR.parent / "resources" / "styles" / "theme.qss"
             if style_path.exists():
@@ -60,13 +76,25 @@ class EduPathApp:
             pass  # Use default styles
 
     def run(self) -> int:
-        """Run the application."""
+        """
+        Run the application event loop.
+
+        Shows main window and starts Qt event processing.
+
+        Returns:
+            int: Application exit code.
+        """
         self.main_window.show()
         return self.app.exec()
 
 
 def main():
-    """Application entry point."""
+    """
+    Application entry point.
+
+    Creates EduPathApp instance and runs the event loop.
+    Exits with the application's return code.
+    """
     app = EduPathApp()
     sys.exit(app.run())
 

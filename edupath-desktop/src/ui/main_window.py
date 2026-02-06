@@ -18,17 +18,29 @@ from services.cache_service import CacheService
 
 
 class Sidebar(QFrame):
-    """Navigation sidebar."""
+    """
+    Navigation sidebar.
+
+    Contains logo, navigation buttons, and logout.
+    Emits navigation_requested signal on button clicks.
+    """
 
     navigation_requested = pyqtSignal(str)
 
     def __init__(self, parent=None):
+        """
+        Initialize the sidebar.
+
+        Args:
+            parent: Parent widget.
+        """
         super().__init__(parent)
         self.setObjectName("sidebar")
         self.setFixedWidth(250)
         self._setup_ui()
 
     def _setup_ui(self):
+        """Set up sidebar UI components."""
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
@@ -65,7 +77,12 @@ class Sidebar(QFrame):
 
 
 class MainWindow(QMainWindow):
-    """Main application window."""
+    """
+    Main application window.
+
+    Manages navigation, views, and service dependencies.
+    Contains sidebar for navigation and stacked widget for views.
+    """
 
     def __init__(
         self,
@@ -73,6 +90,14 @@ class MainWindow(QMainWindow):
         course_service: CourseService,
         cache_service: CacheService,
     ):
+        """
+        Initialize the main window.
+
+        Args:
+            auth_service: Service for authentication.
+            course_service: Service for course data.
+            cache_service: Service for local caching.
+        """
         super().__init__()
         self.auth_service = auth_service
         self.course_service = course_service
@@ -89,13 +114,21 @@ class MainWindow(QMainWindow):
             self._show_login_view()
 
     def _setup_window(self):
-        """Configure window properties."""
+        """
+        Configure window properties.
+
+        Sets title, size constraints, and initial dimensions.
+        """
         self.setWindowTitle(config.APP_NAME)
         self.setMinimumSize(config.MIN_WINDOW_WIDTH, config.MIN_WINDOW_HEIGHT)
         self.resize(config.WINDOW_WIDTH, config.WINDOW_HEIGHT)
 
     def _setup_ui(self):
-        """Setup UI components."""
+        """
+        Setup UI components.
+
+        Creates sidebar and content stack layout.
+        """
         # Central widget
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -118,7 +151,11 @@ class MainWindow(QMainWindow):
         self._setup_views()
 
     def _setup_views(self):
-        """Setup all views."""
+        """
+        Setup all views.
+
+        Imports and instantiates login, dashboard, courses, and detail views.
+        """
         from ui.views.login_view import LoginView
         from ui.views.dashboard_view import DashboardView
         from ui.views.courses_view import CoursesView
@@ -143,26 +180,47 @@ class MainWindow(QMainWindow):
         self.content_stack.addWidget(self.course_detail_view)
 
     def _connect_signals(self):
-        """Connect signals to slots."""
+        """
+        Connect signals to slots.
+
+        Wires up sidebar navigation to handler.
+        """
         self.sidebar.navigation_requested.connect(self._on_navigation)
 
     def _show_login_view(self):
-        """Show login view."""
+        """
+        Show login view.
+
+        Hides sidebar and switches to login screen.
+        """
         self.sidebar.hide()
         self.content_stack.setCurrentWidget(self.login_view)
 
     def _show_main_view(self):
-        """Show main view with sidebar."""
+        """
+        Show main view with sidebar.
+
+        Shows sidebar and switches to dashboard.
+        """
         self.sidebar.show()
         self.content_stack.setCurrentWidget(self.dashboard_view)
         self.dashboard_view.load_data()
 
     def _on_login_success(self):
-        """Handle successful login."""
+        """
+        Handle successful login.
+
+        Transitions from login to main view.
+        """
         self._show_main_view()
 
     def _on_navigation(self, view_name: str):
-        """Handle navigation requests."""
+        """
+        Handle navigation requests.
+
+        Args:
+            view_name: Name of view to navigate to.
+        """
         if view_name == "logout":
             import asyncio
             asyncio.create_task(self._logout())
@@ -176,11 +234,20 @@ class MainWindow(QMainWindow):
             pass  # TODO: Implement profile view
 
     def _on_course_selected(self, slug: str):
-        """Handle course selection."""
+        """
+        Handle course selection.
+
+        Args:
+            slug: Selected course slug.
+        """
         self.course_detail_view.load_course(slug)
         self.content_stack.setCurrentWidget(self.course_detail_view)
 
     async def _logout(self):
-        """Logout and show login view."""
+        """
+        Logout and show login view.
+
+        Clears auth state and returns to login screen.
+        """
         await self.auth_service.logout()
         self._show_login_view()

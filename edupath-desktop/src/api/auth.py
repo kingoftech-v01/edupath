@@ -17,7 +17,11 @@ SERVICE_NAME = "edupath_desktop"
 
 @dataclass
 class TokenData:
-    """JWT token data."""
+    """
+    JWT token data.
+
+    Holds access and refresh tokens with expiration time.
+    """
 
     access_token: str
     refresh_token: Optional[str] = None
@@ -25,14 +29,29 @@ class TokenData:
 
 
 class AuthHandler:
-    """Handles authentication tokens securely."""
+    """
+    Handles authentication tokens securely.
+
+    Uses system keyring for secure token storage.
+    Manages token lifecycle: save, retrieve, validate, clear.
+    """
 
     def __init__(self):
+        """
+        Initialize the auth handler.
+
+        Attempts to load previously saved token from keyring.
+        """
         self._token_data: Optional[TokenData] = None
         self._load_saved_token()
 
     def _load_saved_token(self):
-        """Load saved token from secure storage."""
+        """
+        Load saved token from secure storage.
+
+        Retrieves token data from system keyring and parses
+        JSON to restore TokenData instance.
+        """
         try:
             saved = keyring.get_password(SERVICE_NAME, "token_data")
             if saved:
@@ -49,7 +68,16 @@ class AuthHandler:
             self._token_data = None
 
     def save_token(self, access_token: str, refresh_token: Optional[str] = None, expires_in: int = 3600):
-        """Save authentication token."""
+        """
+        Save authentication token.
+
+        Stores token in memory and persists to system keyring.
+
+        Args:
+            access_token: The JWT access token.
+            refresh_token: Optional refresh token.
+            expires_in: Token lifetime in seconds.
+        """
         expires_at = datetime.now() + timedelta(seconds=expires_in)
         self._token_data = TokenData(
             access_token=access_token,
@@ -66,7 +94,14 @@ class AuthHandler:
         keyring.set_password(SERVICE_NAME, "token_data", json.dumps(data))
 
     def get_token(self) -> Optional[str]:
-        """Get current access token if valid."""
+        """
+        Get current access token if valid.
+
+        Returns None if token is missing or expired.
+
+        Returns:
+            Optional[str]: The access token or None.
+        """
         if self._token_data and self._token_data.access_token:
             if self._token_data.expires_at:
                 if datetime.now() < self._token_data.expires_at:
@@ -76,19 +111,33 @@ class AuthHandler:
         return None
 
     def get_refresh_token(self) -> Optional[str]:
-        """Get refresh token."""
+        """
+        Get refresh token.
+
+        Returns:
+            Optional[str]: The refresh token or None.
+        """
         if self._token_data:
             return self._token_data.refresh_token
         return None
 
     def is_token_expired(self) -> bool:
-        """Check if token is expired."""
+        """
+        Check if token is expired.
+
+        Returns:
+            bool: True if expired or no token exists.
+        """
         if not self._token_data or not self._token_data.expires_at:
             return True
         return datetime.now() >= self._token_data.expires_at
 
     def clear_token(self):
-        """Clear authentication token."""
+        """
+        Clear authentication token.
+
+        Removes token from memory and keyring. Used on logout.
+        """
         self._token_data = None
         try:
             keyring.delete_password(SERVICE_NAME, "token_data")
@@ -96,5 +145,10 @@ class AuthHandler:
             pass
 
     def is_authenticated(self) -> bool:
-        """Check if user is authenticated."""
+        """
+        Check if user is authenticated.
+
+        Returns:
+            bool: True if valid token exists.
+        """
         return self.get_token() is not None

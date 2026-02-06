@@ -18,7 +18,11 @@ Base = declarative_base()
 
 
 class CacheEntry(Base):
-    """Cache entry model."""
+    """
+    Cache entry model.
+
+    SQLAlchemy model for storing cached data with expiration.
+    """
 
     __tablename__ = "cache"
 
@@ -30,9 +34,22 @@ class CacheEntry(Base):
 
 
 class CacheService:
-    """Local cache service using SQLite."""
+    """
+    Local cache service using SQLite.
+
+    Provides key-value caching with automatic expiration.
+    Includes specialized methods for courses and categories.
+    """
 
     def __init__(self, cache_dir: Path, db_path: Path, expiry_hours: int = 24):
+        """
+        Initialize the cache service.
+
+        Args:
+            cache_dir: Directory for cache files.
+            db_path: Path to SQLite database file.
+            expiry_hours: Cache entry lifetime in hours.
+        """
         self.cache_dir = cache_dir
         self.db_path = db_path
         self.expiry_hours = expiry_hours
@@ -43,15 +60,31 @@ class CacheService:
         self.Session = sessionmaker(bind=self.engine)
 
     def _get_session(self):
-        """Get database session."""
+        """
+        Get database session.
+
+        Returns:
+            Session: SQLAlchemy session instance.
+        """
         return self.Session()
 
     def _get_expiry(self) -> datetime:
-        """Get expiry datetime."""
+        """
+        Get expiry datetime.
+
+        Returns:
+            datetime: Expiration time based on expiry_hours.
+        """
         return datetime.now() + timedelta(hours=self.expiry_hours)
 
     def set(self, key: str, value: any) -> None:
-        """Set cache value."""
+        """
+        Set cache value.
+
+        Args:
+            key: Cache key.
+            value: Value to cache (will be JSON serialized).
+        """
         session = self._get_session()
         try:
             entry = session.query(CacheEntry).filter_by(key=key).first()
@@ -70,7 +103,15 @@ class CacheService:
             session.close()
 
     def get(self, key: str) -> Optional[any]:
-        """Get cache value if not expired."""
+        """
+        Get cache value if not expired.
+
+        Args:
+            key: Cache key to retrieve.
+
+        Returns:
+            Optional[any]: Cached value or None if expired/missing.
+        """
         session = self._get_session()
         try:
             entry = session.query(CacheEntry).filter_by(key=key).first()
@@ -81,7 +122,12 @@ class CacheService:
             session.close()
 
     def delete(self, key: str) -> None:
-        """Delete cache entry."""
+        """
+        Delete cache entry.
+
+        Args:
+            key: Cache key to delete.
+        """
         session = self._get_session()
         try:
             session.query(CacheEntry).filter_by(key=key).delete()
@@ -90,7 +136,11 @@ class CacheService:
             session.close()
 
     def clear(self) -> None:
-        """Clear all cache."""
+        """
+        Clear all cache.
+
+        Removes all entries from the cache database.
+        """
         session = self._get_session()
         try:
             session.query(CacheEntry).delete()
@@ -99,7 +149,11 @@ class CacheService:
             session.close()
 
     def clear_expired(self) -> None:
-        """Clear expired cache entries."""
+        """
+        Clear expired cache entries.
+
+        Removes entries where expires_at is in the past.
+        """
         session = self._get_session()
         try:
             session.query(CacheEntry).filter(
@@ -112,33 +166,70 @@ class CacheService:
     # Course-specific cache methods
 
     def cache_courses(self, key: str, courses: List[Course]) -> None:
-        """Cache courses list."""
+        """
+        Cache courses list.
+
+        Args:
+            key: Cache key for the course list.
+            courses: List of Course objects to cache.
+        """
         self.set(key, [c.model_dump() for c in courses])
 
     def get_courses(self, key: str) -> Optional[List[Course]]:
-        """Get cached courses."""
+        """
+        Get cached courses.
+
+        Args:
+            key: Cache key to retrieve.
+
+        Returns:
+            Optional[List[Course]]: List of courses or None.
+        """
         data = self.get(key)
         if data:
             return [Course(**c) for c in data]
         return None
 
     def cache_course(self, course: Course) -> None:
-        """Cache single course."""
+        """
+        Cache single course.
+
+        Args:
+            course: Course object to cache.
+        """
         self.set(f"course:{course.slug}", course.model_dump())
 
     def get_course(self, slug: str) -> Optional[Course]:
-        """Get cached course."""
+        """
+        Get cached course.
+
+        Args:
+            slug: Course slug to retrieve.
+
+        Returns:
+            Optional[Course]: Course object or None.
+        """
         data = self.get(f"course:{slug}")
         if data:
             return Course(**data)
         return None
 
     def cache_categories(self, categories: List[Category]) -> None:
-        """Cache categories list."""
+        """
+        Cache categories list.
+
+        Args:
+            categories: List of Category objects to cache.
+        """
         self.set("categories", [c.model_dump() for c in categories])
 
     def get_categories(self) -> Optional[List[Category]]:
-        """Get cached categories."""
+        """
+        Get cached categories.
+
+        Returns:
+            Optional[List[Category]]: List of categories or None.
+        """
         data = self.get("categories")
         if data:
             return [Category(**c) for c in data]

@@ -15,7 +15,11 @@ from .cache_service import CacheService
 
 @dataclass
 class CoursesResult:
-    """Courses fetch result."""
+    """
+    Courses fetch result.
+
+    Contains success status, course list, and cache indicator.
+    """
 
     success: bool
     courses: List[Course] = None
@@ -28,9 +32,21 @@ class CoursesResult:
 
 
 class CourseService:
-    """Course service with caching."""
+    """
+    Course service with caching.
+
+    Provides methods for fetching courses, categories, and reviews.
+    Implements local caching to reduce API calls.
+    """
 
     def __init__(self, api_client: APIClient, cache_service: CacheService):
+        """
+        Initialize the course service.
+
+        Args:
+            api_client: The API client for making requests.
+            cache_service: The cache service for local storage.
+        """
         self.api_client = api_client
         self.cache = cache_service
 
@@ -41,7 +57,18 @@ class CourseService:
         is_free: Optional[bool] = None,
         use_cache: bool = True,
     ) -> CoursesResult:
-        """Get courses with optional filters."""
+        """
+        Get courses with optional filters.
+
+        Args:
+            category: Filter by category slug.
+            search: Search term for title/description.
+            is_free: Filter by free courses only.
+            use_cache: Whether to use cached results.
+
+        Returns:
+            CoursesResult: Result with courses list.
+        """
         # Build cache key
         cache_key = f"courses:{category}:{search}:{is_free}"
 
@@ -74,7 +101,15 @@ class CourseService:
         return CoursesResult(success=False, error=response.error)
 
     async def get_course(self, slug: str) -> Optional[Course]:
-        """Get single course by slug."""
+        """
+        Get single course by slug.
+
+        Args:
+            slug: The course's URL slug.
+
+        Returns:
+            Optional[Course]: Course object or None.
+        """
         # Try cache first
         cached = self.cache.get_course(slug)
         if cached:
@@ -89,21 +124,38 @@ class CourseService:
         return None
 
     async def get_featured_courses(self) -> List[Course]:
-        """Get featured courses."""
+        """
+        Get featured courses.
+
+        Returns:
+            List[Course]: List of featured courses.
+        """
         response = await self.api_client.get(Endpoints.COURSES_FEATURED)
         if response.success:
             return [Course(**c) for c in response.data]
         return []
 
     async def get_free_courses(self) -> List[Course]:
-        """Get free courses."""
+        """
+        Get free courses.
+
+        Returns:
+            List[Course]: List of free courses.
+        """
         response = await self.api_client.get(Endpoints.COURSES_FREE)
         if response.success:
             return [Course(**c) for c in response.data]
         return []
 
     async def get_categories(self) -> List[Category]:
-        """Get all categories."""
+        """
+        Get all categories.
+
+        Returns cached categories or fetches from API.
+
+        Returns:
+            List[Category]: List of course categories.
+        """
         # Try cache
         cached = self.cache.get_categories()
         if cached:
@@ -119,7 +171,12 @@ class CourseService:
         return []
 
     async def get_instructors(self) -> List[Instructor]:
-        """Get all instructors."""
+        """
+        Get all instructors.
+
+        Returns:
+            List[Instructor]: List of course instructors.
+        """
         response = await self.api_client.get(Endpoints.INSTRUCTORS)
         if response.success:
             results = response.data.get("results", []) if isinstance(response.data, dict) else response.data
@@ -127,7 +184,15 @@ class CourseService:
         return []
 
     async def get_course_reviews(self, course_id: int) -> List[Review]:
-        """Get reviews for a course."""
+        """
+        Get reviews for a course.
+
+        Args:
+            course_id: The course ID to get reviews for.
+
+        Returns:
+            List[Review]: List of course reviews.
+        """
         response = await self.api_client.get(
             Endpoints.REVIEWS,
             params={"course": course_id},
@@ -140,7 +205,17 @@ class CourseService:
     async def submit_review(
         self, course_id: int, rating: int, description: str
     ) -> tuple[bool, Optional[str]]:
-        """Submit a course review."""
+        """
+        Submit a course review.
+
+        Args:
+            course_id: The course ID to review.
+            rating: Rating from 1-5.
+            description: Review text.
+
+        Returns:
+            tuple[bool, Optional[str]]: Success status and error message.
+        """
         response = await self.api_client.post(
             Endpoints.REVIEWS,
             data={

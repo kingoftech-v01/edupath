@@ -11,7 +11,11 @@ from pydantic import BaseModel
 
 
 class Category(BaseModel):
-    """Course category model."""
+    """
+    Course category model.
+
+    Represents a course category with associated course count.
+    """
 
     id: int
     name: str
@@ -23,7 +27,11 @@ class Category(BaseModel):
 
 
 class Instructor(BaseModel):
-    """Instructor model."""
+    """
+    Instructor model.
+
+    Represents a course instructor with profile and social links.
+    """
 
     id: int
     name: str
@@ -39,7 +47,11 @@ class Instructor(BaseModel):
 
 
 class Course(BaseModel):
-    """Course model."""
+    """
+    Course model.
+
+    Represents a course with pricing, media, and relationships.
+    """
 
     id: int
     title: str
@@ -61,14 +73,23 @@ class Course(BaseModel):
 
     @property
     def formatted_price(self) -> str:
-        """Get formatted price string."""
+        """
+        Get formatted price string.
+
+        Returns:
+            str: Price formatted as currency (e.g., "$0" or "$99").
+        """
         if self.is_free or self.price == 0:
             return "$0"
         return f"${self.price:.0f}"
 
 
 class Review(BaseModel):
-    """Course review model."""
+    """
+    Course review model.
+
+    Represents a user review with rating for a course.
+    """
 
     id: int
     name: str
