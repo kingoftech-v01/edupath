@@ -1,8 +1,4 @@
-"""
-Accounts Models - User profiles and authentication.
-
-Uses django-allauth for authentication.
-"""
+"""User profiles. Auth handled by django-allauth."""
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -11,46 +7,24 @@ from django.dispatch import receiver
 
 
 class UserProfile(models.Model):
-    """
-    Extended user profile information.
-
-    Stores additional user data beyond Django's built-in User model.
-    Created automatically via signal when a new User is registered.
-
-    Attributes:
-        user: One-to-one link to Django's User model.
-        avatar: Optional profile image.
-        bio: Short user biography (max 500 chars).
-        phone: Contact phone number.
-        website: Personal website URL.
-        linkedin_url: LinkedIn profile URL.
-        twitter_url: Twitter profile URL.
-        github_url: GitHub profile URL.
-        email_notifications: Whether user wants email notifications.
-        created_at: Profile creation timestamp.
-        updated_at: Last modification timestamp.
-    """
+    """Extended user data beyond Django's built-in User model."""
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         related_name='profile'
     )
 
-    # Profile info
     avatar = models.ImageField(upload_to='avatars/', blank=True)
     bio = models.TextField(blank=True, max_length=500)
     phone = models.CharField(max_length=20, blank=True)
 
-    # Social links
     website = models.URLField(blank=True)
     linkedin_url = models.URLField(blank=True)
     twitter_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
 
-    # Preferences
     email_notifications = models.BooleanField(default=True)
 
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -59,58 +33,28 @@ class UserProfile(models.Model):
         verbose_name_plural = 'User Profiles'
 
     def __str__(self):
-        """Return a human-readable string representation of the profile."""
         return f"{self.user.username}'s profile"
 
     @property
     def full_name(self):
-        """
-        Get user's full name or username as fallback.
-
-        Returns:
-            str: Full name if first/last name exist, otherwise username.
-        """
+        """Falls back to username if first/last name not set."""
         name = f"{self.user.first_name} {self.user.last_name}".strip()
         return name or self.user.username
 
 
-# Two separate signals handle profile lifecycle: one for creation, one for cascading saves.
-# This separation ensures profiles are created atomically with users while still allowing
-# profile updates to cascade when User model fields change (e.g., updating first_name).
+# Separate signals for create vs update: ensures atomic profile creation while
+# still cascading User field changes (e.g., first_name) to the profile.
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    """
-    Create a UserProfile when a new User is created.
-
-    Signal handler that ensures every User has an associated profile.
-    Only triggers on initial creation, not on updates.
-
-    Args:
-        sender: The User model class.
-        instance: The User instance being saved.
-        created: Boolean indicating if this is a new record.
-        **kwargs: Additional signal arguments.
-    """
+    """Auto-create profile for new users."""
     if created:
         UserProfile.objects.create(user=instance)
 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    """
-    Save UserProfile when User is saved.
-
-    Signal handler that cascades User saves to the related profile.
-    Ensures profile stays in sync when User fields change.
-
-    Args:
-        sender: The User model class.
-        instance: The User instance being saved.
-        **kwargs: Additional signal arguments.
-    """
-    # hasattr check prevents AttributeError during the brief moment between User creation
-    # and profile creation (the create_user_profile signal runs first, but Django's signal
-    # ordering isn't guaranteed across different signal handlers).
+    """Cascade User saves to profile."""
+    # hasattr guards against race between User and profile creation signals
     if hasattr(instance, 'profile'):
         instance.profile.save()

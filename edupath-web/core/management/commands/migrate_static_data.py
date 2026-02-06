@@ -1,11 +1,7 @@
 """
-Management command to populate the database with initial data.
+Seed command for dev/test data. Idempotent via get_or_create.
 
-Usage:
-    python manage.py migrate_static_data
-
-This command populates all models with sample data for development and testing.
-It maintains compatibility with existing templates by matching expected data structures.
+Usage: python manage.py migrate_static_data
 """
 
 from django.core.management.base import BaseCommand
@@ -20,8 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Starting data migration...\n')
 
-        # Order matters: courses need categories + instructors, blogs need instructors.
-        # All methods use get_or_create so this command is idempotent.
+        # Order matters: courses need categories+instructors, blogs need instructors
         self.create_site_config()
         self.create_features()
         self.create_business_partners()
@@ -37,7 +32,6 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('\nData migration completed successfully!'))
 
     def create_site_config(self):
-        """Create site configuration."""
         from core.models import SiteConfiguration
 
         config, created = SiteConfiguration.objects.get_or_create(pk=1)
@@ -59,7 +53,6 @@ class Command(BaseCommand):
             self.stdout.write('  - Site configuration already exists')
 
     def create_features(self):
-        """Create platform features."""
         from core.models import Feature
 
         features_data = [
@@ -101,7 +94,6 @@ class Command(BaseCommand):
         self.stdout.write(f'  [OK] Features: {created_count} created, {len(features_data) - created_count} existed')
 
     def create_business_partners(self):
-        """Create business partners."""
         from core.models import BusinessPartner
 
         partners_data = [
@@ -125,7 +117,6 @@ class Command(BaseCommand):
         self.stdout.write(f'  [OK] Business Partners: {created_count} created, {len(partners_data) - created_count} existed')
 
     def create_statistics(self):
-        """Create site statistics for CTA sections."""
         from core.models import SiteStatistic
 
         stats_data = [
@@ -147,7 +138,6 @@ class Command(BaseCommand):
         self.stdout.write(f'  [OK] Statistics: {created_count} created, {len(stats_data) - created_count} existed')
 
     def create_contact_info(self):
-        """Create contact information."""
         from core.models import ContactInfo
 
         contacts_data = [
@@ -186,7 +176,6 @@ class Command(BaseCommand):
         self.stdout.write(f'  [OK] Contact Info: {created_count} created, {len(contacts_data) - created_count} existed')
 
     def create_pricing_plans(self):
-        """Create pricing plans."""
         from core.models import PricingPlan
 
         plans_data = [
@@ -250,7 +239,6 @@ class Command(BaseCommand):
         self.stdout.write(f'  [OK] Pricing Plans: {created_count} created, {len(plans_data) - created_count} existed')
 
     def create_categories(self):
-        """Create course categories."""
         from courses.models import Category
 
         categories_data = [
@@ -276,7 +264,6 @@ class Command(BaseCommand):
         self.stdout.write(f'  [OK] Categories: {created_count} created, {len(categories_data) - created_count} existed')
 
     def create_instructors(self):
-        """Create instructors."""
         from courses.models import Instructor
 
         instructors_data = [
@@ -374,7 +361,6 @@ class Command(BaseCommand):
         self.stdout.write(f'  [OK] Instructors: {created_count} created, {len(instructors_data) - created_count} existed')
 
     def create_courses(self):
-        """Create courses."""
         from courses.models import Category, Instructor, Course
 
         # Get categories and instructors
@@ -563,7 +549,6 @@ class Command(BaseCommand):
         self.stdout.write(f'  [OK] Courses: {created_count} created, {len(courses_data) - created_count} existed')
 
     def create_reviews(self):
-        """Create course reviews."""
         from courses.models import Review
 
         reviews_data = [
@@ -623,7 +608,6 @@ class Command(BaseCommand):
         self.stdout.write(f'  [OK] Reviews: {created_count} created, {len(reviews_data) - created_count} existed')
 
     def create_blogs(self):
-        """Create blog posts."""
         from blog.models import Blog
         from courses.models import Instructor
 
