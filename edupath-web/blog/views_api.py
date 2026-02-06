@@ -29,13 +29,29 @@ class BlogViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ['-publish_date']
 
     def get_serializer_class(self):
+        """
+        Return serializer based on action.
+
+        Returns:
+            Serializer: Detail serializer for retrieve, list otherwise.
+        """
         if self.action == 'retrieve':
             return BlogDetailSerializer
         return BlogListSerializer
 
     @action(detail=False, methods=['get'])
     def recent(self, request):
-        """Get recent blog posts."""
+        """
+        Get recent blog posts.
+
+        Returns the 5 most recent active blog posts.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            Response: List of recent blog posts.
+        """
         blogs = self.get_queryset()[:5]
         serializer = BlogListSerializer(blogs, many=True)
         return Response(serializer.data)

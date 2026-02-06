@@ -21,7 +21,12 @@ TEXTAREA_CLASSES = (
 
 
 class ContactForm(forms.ModelForm):
-    """Contact form for user inquiries."""
+    """
+    Contact form for user inquiries.
+
+    Used on the contact page to collect messages from visitors.
+    Styled with Tailwind CSS classes.
+    """
 
     class Meta:
         model = ContactSubmission

@@ -24,35 +24,55 @@ from .serializers import (
 # =============================================================================
 
 class FeatureViewSet(viewsets.ReadOnlyModelViewSet):
-    """Platform features."""
+    """
+    Platform features API.
+
+    Lists all active features for display on homepage.
+    """
     queryset = Feature.objects.filter(is_active=True)
     serializer_class = FeatureSerializer
     pagination_class = None
 
 
 class BusinessPartnerViewSet(viewsets.ReadOnlyModelViewSet):
-    """Business partner logos."""
+    """
+    Business partner logos API.
+
+    Lists all active partner logos for carousel display.
+    """
     queryset = BusinessPartner.objects.filter(is_active=True)
     serializer_class = BusinessPartnerSerializer
     pagination_class = None
 
 
 class SiteStatisticViewSet(viewsets.ReadOnlyModelViewSet):
-    """Site statistics for CTA sections."""
+    """
+    Site statistics API.
+
+    Lists statistics for CTA counter animations.
+    """
     queryset = SiteStatistic.objects.filter(is_active=True)
     serializer_class = SiteStatisticSerializer
     pagination_class = None
 
 
 class PricingPlanViewSet(viewsets.ReadOnlyModelViewSet):
-    """Pricing plans."""
+    """
+    Pricing plans API.
+
+    Lists all active pricing plans for pricing page.
+    """
     queryset = PricingPlan.objects.filter(is_active=True)
     serializer_class = PricingPlanSerializer
     pagination_class = None
 
 
 class ContactInfoViewSet(viewsets.ReadOnlyModelViewSet):
-    """Contact information."""
+    """
+    Contact information API.
+
+    Lists all contact methods for contact page.
+    """
     queryset = ContactInfo.objects.filter(is_active=True)
     serializer_class = ContactInfoSerializer
     pagination_class = None
@@ -71,6 +91,17 @@ class ContactSubmissionAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
+        """
+        Submit a contact form message.
+
+        Creates a new ContactSubmission. Links to user if authenticated.
+
+        Args:
+            request: The HTTP request object with form data.
+
+        Returns:
+            Response: Success message or validation errors.
+        """
         serializer = ContactSubmissionSerializer(
             data=request.data,
             context={'request': request}
@@ -97,6 +128,17 @@ class SiteConfigurationAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
+        """
+        Get site configuration.
+
+        Returns the singleton site configuration.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            Response: Serialized site configuration.
+        """
         config = SiteConfiguration.get_solo()
         serializer = SiteConfigurationSerializer(config)
         return Response(serializer.data)
@@ -118,6 +160,18 @@ class HomepageDataAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
+        """
+        Get all homepage data in a single request.
+
+        Returns features, partners, categories, courses, instructors,
+        reviews, statistics, and blogs. Limits match homepage layout.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            Response: Combined homepage data dictionary.
+        """
         # Imports inside method to avoid circular imports between core and other apps.
         from courses.models import Category, Course, Instructor
         from courses.serializers import CategoryListSerializer, CourseListSerializer, InstructorListSerializer

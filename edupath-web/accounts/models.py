@@ -11,7 +11,25 @@ from django.dispatch import receiver
 
 
 class UserProfile(models.Model):
-    """Extended user profile information."""
+    """
+    Extended user profile information.
+
+    Stores additional user data beyond Django's built-in User model.
+    Created automatically via signal when a new User is registered.
+
+    Attributes:
+        user: One-to-one link to Django's User model.
+        avatar: Optional profile image.
+        bio: Short user biography (max 500 chars).
+        phone: Contact phone number.
+        website: Personal website URL.
+        linkedin_url: LinkedIn profile URL.
+        twitter_url: Twitter profile URL.
+        github_url: GitHub profile URL.
+        email_notifications: Whether user wants email notifications.
+        created_at: Profile creation timestamp.
+        updated_at: Last modification timestamp.
+    """
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -41,11 +59,17 @@ class UserProfile(models.Model):
         verbose_name_plural = 'User Profiles'
 
     def __str__(self):
+        """Return a human-readable string representation of the profile."""
         return f"{self.user.username}'s profile"
 
     @property
     def full_name(self):
-        """Get user's full name or username."""
+        """
+        Get user's full name or username as fallback.
+
+        Returns:
+            str: Full name if first/last name exist, otherwise username.
+        """
         name = f"{self.user.first_name} {self.user.last_name}".strip()
         return name or self.user.username
 
@@ -56,14 +80,35 @@ class UserProfile(models.Model):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    """Create a UserProfile when a new User is created."""
+    """
+    Create a UserProfile when a new User is created.
+
+    Signal handler that ensures every User has an associated profile.
+    Only triggers on initial creation, not on updates.
+
+    Args:
+        sender: The User model class.
+        instance: The User instance being saved.
+        created: Boolean indicating if this is a new record.
+        **kwargs: Additional signal arguments.
+    """
     if created:
         UserProfile.objects.create(user=instance)
 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    """Save UserProfile when User is saved."""
+    """
+    Save UserProfile when User is saved.
+
+    Signal handler that cascades User saves to the related profile.
+    Ensures profile stays in sync when User fields change.
+
+    Args:
+        sender: The User model class.
+        instance: The User instance being saved.
+        **kwargs: Additional signal arguments.
+    """
     # hasattr check prevents AttributeError during the brief moment between User creation
     # and profile creation (the create_user_profile signal runs first, but Django's signal
     # ordering isn't guaranteed across different signal handlers).

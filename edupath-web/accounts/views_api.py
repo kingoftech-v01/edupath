@@ -24,18 +24,47 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
 
     def get_permissions(self):
+        """
+        Return permission classes based on action.
+
+        Admin-only access for list and destroy actions.
+        Authenticated access for other actions (retrieve, update, me).
+
+        Returns:
+            list: Permission class instances.
+        """
         if self.action in ['list', 'destroy']:
             return [permissions.IsAdminUser()]
         return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
+        """
+        Return filtered queryset based on user role.
+
+        Staff users can see all profiles.
+        Regular users can only see their own profile.
+
+        Returns:
+            QuerySet: Filtered UserProfile queryset.
+        """
         if self.request.user.is_staff:
             return UserProfile.objects.all()
         return UserProfile.objects.filter(user=self.request.user)
 
     @action(detail=False, methods=['get', 'patch'])
     def me(self, request):
-        """Get or update current user's profile."""
+        """
+        Get or update current user's profile.
+
+        GET: Returns the authenticated user's profile data.
+        PATCH: Partially updates the authenticated user's profile.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            Response: Profile data or validation errors.
+        """
         profile = request.user.profile
 
         if request.method == 'PATCH':
@@ -58,5 +87,14 @@ class CurrentUserAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        """
+        Return current user's information.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            Response: Serialized user data including nested profile.
+        """
         serializer = UserSerializer(request.user)
         return Response(serializer.data)

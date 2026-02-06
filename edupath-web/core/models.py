@@ -8,7 +8,15 @@ from django.utils import timezone
 
 
 class TimestampedModel(models.Model):
-    """Abstract base model with timestamps."""
+    """
+    Abstract base model with timestamps.
+
+    Provides automatic timestamp tracking for creation and updates.
+
+    Attributes:
+        created_at: When the record was created.
+        updated_at: When the record was last modified.
+    """
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -17,7 +25,15 @@ class TimestampedModel(models.Model):
 
 
 class OrderedModel(models.Model):
-    """Abstract base model with ordering."""
+    """
+    Abstract base model with ordering and soft-delete.
+
+    Provides manual ordering and visibility control.
+
+    Attributes:
+        order: Sort order (lower = first).
+        is_active: Whether item is visible.
+    """
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
@@ -31,7 +47,17 @@ class OrderedModel(models.Model):
 # =============================================================================
 
 class Feature(TimestampedModel, OrderedModel):
-    """Platform features displayed on homepage."""
+    """
+    Platform features displayed on homepage.
+
+    Represents key selling points with icons (e.g., "Expert Instructors").
+
+    Attributes:
+        icon: CSS icon class.
+        title: Feature title.
+        desc: Feature description.
+        link_url: Optional link for "Learn more".
+    """
     icon = models.CharField(
         max_length=100,
         help_text="Icon class (e.g., iconoir-thumbs-up text-3xl)"
@@ -41,6 +67,7 @@ class Feature(TimestampedModel, OrderedModel):
     link_url = models.URLField(blank=True)
 
     def __str__(self):
+        """Return feature title as string representation."""
         return self.title
 
 
@@ -49,7 +76,16 @@ class Feature(TimestampedModel, OrderedModel):
 # =============================================================================
 
 class BusinessPartner(TimestampedModel, OrderedModel):
-    """Business partner logos."""
+    """
+    Business partner logos.
+
+    Displays partner/client logos in the homepage carousel.
+
+    Attributes:
+        name: Partner company name.
+        img: Path to logo image.
+        website_url: Optional partner website link.
+    """
     name = models.CharField(max_length=100)
     img = models.CharField(
         max_length=255,
@@ -58,6 +94,7 @@ class BusinessPartner(TimestampedModel, OrderedModel):
     website_url = models.URLField(blank=True)
 
     def __str__(self):
+        """Return partner name as string representation."""
         return self.name
 
 
@@ -66,7 +103,18 @@ class BusinessPartner(TimestampedModel, OrderedModel):
 # =============================================================================
 
 class SiteStatistic(TimestampedModel, OrderedModel):
-    """CTA statistics (Courses count, Countries, Students, Instructors)."""
+    """
+    CTA statistics for animated counters.
+
+    Displays impressive numbers (Courses count, Countries, Students).
+    JavaScript animates from 'number' to 'target' on scroll.
+
+    Attributes:
+        title: Statistic label.
+        number: Starting number for animation.
+        target: Target number (what counter animates to).
+        symbol: Suffix (e.g., '+', 'K', '%').
+    """
     title = models.CharField(max_length=100)
     number = models.PositiveIntegerField(default=0, help_text="Starting number for animation")
     target = models.PositiveIntegerField(default=0, help_text="Target number for counter")
@@ -78,6 +126,7 @@ class SiteStatistic(TimestampedModel, OrderedModel):
         ordering = ['order']
 
     def __str__(self):
+        """Return statistic title and value as string representation."""
         return f"{self.title}: {self.target}{self.symbol}"
 
 
@@ -86,7 +135,20 @@ class SiteStatistic(TimestampedModel, OrderedModel):
 # =============================================================================
 
 class PricingPlan(TimestampedModel, OrderedModel):
-    """Subscription pricing plans."""
+    """
+    Subscription pricing plans.
+
+    Displays pricing cards on the pricing page with features list.
+
+    Attributes:
+        name: Plan name (e.g., "Basic", "Pro", "Enterprise").
+        price: Plan price.
+        duration: Billing period (Week, Month, Year).
+        button_text: CTA button text.
+        style: CSS classes for plan container.
+        button_style: CSS classes for CTA button.
+        features: JSON list of included features.
+    """
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     duration = models.CharField(max_length=50, help_text="e.g., Week, Month, Year")
@@ -108,6 +170,7 @@ class PricingPlan(TimestampedModel, OrderedModel):
     features = models.JSONField(default=list, blank=True, help_text="List of plan features")
 
     def __str__(self):
+        """Return plan name and price as string representation."""
         return f"{self.name} - ${self.price}/{self.duration}"
 
 
@@ -116,7 +179,18 @@ class PricingPlan(TimestampedModel, OrderedModel):
 # =============================================================================
 
 class ContactInfo(TimestampedModel, OrderedModel):
-    """Contact information entries."""
+    """
+    Contact information entries.
+
+    Displays contact methods on the contact page (phone, email, location).
+
+    Attributes:
+        icon: CSS icon class.
+        name: Contact type (e.g., "Phone", "Email").
+        title: Description text.
+        info: Contact value (phone number, email address).
+        link_url: Optional clickable link (mailto:, tel:).
+    """
     icon = models.CharField(max_length=100, help_text="Icon class")
     name = models.CharField(max_length=100, help_text="e.g., Phone, Email, Location")
     title = models.TextField(help_text="Description text")
@@ -129,6 +203,7 @@ class ContactInfo(TimestampedModel, OrderedModel):
         ordering = ['order']
 
     def __str__(self):
+        """Return contact type name as string representation."""
         return self.name
 
 
@@ -137,7 +212,19 @@ class ContactInfo(TimestampedModel, OrderedModel):
 # =============================================================================
 
 class ContactSubmission(TimestampedModel):
-    """Contact form submissions."""
+    """
+    Contact form submissions.
+
+    Stores messages from the contact form for admin review.
+
+    Attributes:
+        name: Sender's name.
+        email: Sender's email address.
+        subject: Message subject.
+        message: Message content.
+        status: Processing status (new, read, replied, archived).
+        user: Optional link to logged-in user.
+    """
     name = models.CharField(max_length=255)
     email = models.EmailField()
     subject = models.CharField(max_length=255)
@@ -161,6 +248,7 @@ class ContactSubmission(TimestampedModel):
         verbose_name_plural = "Contact Submissions"
 
     def __str__(self):
+        """Return sender name and subject as string representation."""
         return f"{self.name} - {self.subject}"
 
 
@@ -204,15 +292,32 @@ class SiteConfiguration(models.Model):
         verbose_name_plural = "Site Configuration"
 
     def save(self, *args, **kwargs):
+        """
+        Save configuration, enforcing singleton pattern.
+
+        Forces pk=1 to ensure only one instance exists.
+
+        Args:
+            *args: Positional arguments passed to parent save.
+            **kwargs: Keyword arguments passed to parent save.
+        """
         # Force pk=1 to enforce singleton - any save overwrites the single instance.
         self.pk = 1
         super().save(*args, **kwargs)
 
     @classmethod
     def get_solo(cls):
-        """Always use this to get config; creates with defaults if none exists."""
+        """
+        Get the singleton configuration instance.
+
+        Creates with defaults if none exists.
+
+        Returns:
+            SiteConfiguration: The single configuration instance.
+        """
         obj, created = cls.objects.get_or_create(pk=1)
         return obj
 
     def __str__(self):
+        """Return site name as string representation."""
         return self.site_name

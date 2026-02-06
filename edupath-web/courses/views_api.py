@@ -37,16 +37,37 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ['order']
 
     def get_queryset(self):
+        """
+        Return active categories only.
+
+        Returns:
+            QuerySet: Active Category objects.
+        """
         return Category.objects.filter(is_active=True)
 
     def get_serializer_class(self):
+        """
+        Return serializer based on action.
+
+        Returns:
+            Serializer: Detail serializer for retrieve, list serializer otherwise.
+        """
         if self.action == 'retrieve':
             return CategoryDetailSerializer
         return CategoryListSerializer
 
     @action(detail=True, methods=['get'])
     def courses(self, request, slug=None):
-        """Get courses in this category."""
+        """
+        Get courses in this category.
+
+        Args:
+            request: The HTTP request object.
+            slug: Category slug.
+
+        Returns:
+            Response: List of courses in this category.
+        """
         category = self.get_object()
         courses = category.courses.filter(is_active=True)
         serializer = CourseListSerializer(courses, many=True)
@@ -74,13 +95,28 @@ class InstructorViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ['order']
 
     def get_serializer_class(self):
+        """
+        Return serializer based on action.
+
+        Returns:
+            Serializer: Detail serializer for retrieve, list serializer otherwise.
+        """
         if self.action == 'retrieve':
             return InstructorDetailSerializer
         return InstructorListSerializer
 
     @action(detail=True, methods=['get'])
     def courses(self, request, slug=None):
-        """Get courses by this instructor."""
+        """
+        Get courses by this instructor.
+
+        Args:
+            request: The HTTP request object.
+            slug: Instructor slug.
+
+        Returns:
+            Response: List of courses by this instructor.
+        """
         instructor = self.get_object()
         courses = instructor.courses.filter(is_active=True)
         serializer = CourseListSerializer(courses, many=True)
@@ -115,10 +151,24 @@ class CourseViewSet(viewsets.ModelViewSet):
     ordering = ['order', '-created_at']
 
     def get_queryset(self):
+        """
+        Return active courses with related data.
+
+        Uses select_related to prevent N+1 queries.
+
+        Returns:
+            QuerySet: Active Course objects with category and instructor.
+        """
         # select_related prevents N+1 queries when serializing nested category/instructor.
         return Course.objects.filter(is_active=True).select_related('category', 'instructor')
 
     def get_serializer_class(self):
+        """
+        Return serializer based on action.
+
+        Returns:
+            Serializer: Appropriate serializer for the action.
+        """
         if self.action == 'retrieve':
             return CourseDetailSerializer
         if self.action in ['create', 'update', 'partial_update']:
@@ -126,27 +176,63 @@ class CourseViewSet(viewsets.ModelViewSet):
         return CourseListSerializer
 
     def get_permissions(self):
+        """
+        Return permissions based on action.
+
+        Admin required for create/update/delete operations.
+        Public access for read operations.
+
+        Returns:
+            list: Permission class instances.
+        """
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [permissions.IsAdminUser()]
         return [permissions.AllowAny()]
 
     @action(detail=False, methods=['get'])
     def featured(self, request):
-        """Get featured courses."""
+        """
+        Get featured courses.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            Response: List of up to 6 featured courses.
+        """
         courses = self.get_queryset().filter(is_featured=True)[:6]
         serializer = CourseListSerializer(courses, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
     def free(self, request):
-        """Get free courses."""
+        """
+        Get free courses.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            Response: List of all free courses.
+        """
         courses = self.get_queryset().filter(is_free=True)
         serializer = CourseListSerializer(courses, many=True)
         return Response(serializer.data)
 
     @action(detail=True, methods=['get'])
     def related(self, request, slug=None):
-        """Get related courses (same category, excluding current)."""
+        """
+        Get related courses in the same category.
+
+        Excludes the current course. Limited to 4 for sidebar display.
+
+        Args:
+            request: The HTTP request object.
+            slug: Course slug.
+
+        Returns:
+            Response: List of up to 4 related courses.
+        """
         course = self.get_object()
         # "Related" = same category. Limit to 4 for sidebar display on course detail page.
         related = Course.objects.filter(
@@ -175,11 +261,25 @@ class ReviewViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
 
     def get_serializer_class(self):
+        """
+        Return serializer based on action.
+
+        Returns:
+            Serializer: Create serializer for creation, regular otherwise.
+        """
         if self.action == 'create':
             return ReviewCreateSerializer
         return ReviewSerializer
 
     def get_permissions(self):
+        """
+        Return permissions based on action.
+
+        Public read, authenticated create, admin modify/delete.
+
+        Returns:
+            list: Permission class instances.
+        """
         # Reviews are public read, require login to create (prevents spam),
         # and only admins can modify/delete (moderation control).
         if self.action == 'create':

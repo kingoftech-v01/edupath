@@ -9,6 +9,11 @@ from .models import Blog
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
+    """
+    Admin for Blog model.
+
+    Features image preview, fieldsets, and date hierarchy.
+    """
     list_display = ['title', 'image_preview', 'name', 'author', 'publish_date', 'is_active']
     list_editable = ['is_active']
     list_filter = ['name', 'author', 'is_active', 'publish_date']
@@ -36,6 +41,15 @@ class BlogAdmin(admin.ModelAdmin):
     )
 
     def image_preview(self, obj):
+        """
+        Render blog image thumbnail in list view.
+
+        Args:
+            obj: Blog instance.
+
+        Returns:
+            str: HTML img tag or "-" if no image.
+        """
         if obj.img:
             return format_html(
                 '<img src="{}" width="80" height="50" style="object-fit: cover; border-radius: 4px;" />',

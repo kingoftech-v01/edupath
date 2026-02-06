@@ -21,7 +21,12 @@ TEXTAREA_CLASSES = (
 
 
 class ReviewForm(forms.ModelForm):
-    """Form for submitting course reviews."""
+    """
+    Form for submitting course reviews.
+
+    Used in frontend course detail pages. Rating uses radio buttons,
+    description uses a styled textarea.
+    """
 
     class Meta:
         model = Review
@@ -44,7 +49,12 @@ class ReviewForm(forms.ModelForm):
 
 
 class CourseSearchForm(forms.Form):
-    """Course search and filter form."""
+    """
+    Course search and filter form.
+
+    Used in course listing pages for filtering by search term,
+    category, and price range.
+    """
     search = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={

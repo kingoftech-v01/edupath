@@ -20,7 +20,12 @@ SELECT_CLASSES = (
 
 
 class BlogSearchForm(forms.Form):
-    """Search and filter form for blog listing."""
+    """
+    Search and filter form for blog listing.
+
+    Allows filtering by search term and category (name field).
+    Categories are dynamically populated from existing blogs.
+    """
 
     search = forms.CharField(
         required=False,
@@ -44,7 +49,15 @@ class BlogSearchForm(forms.Form):
         self.fields['category'].choices = self._get_category_choices()
 
     def _get_category_choices(self):
-        """Get unique category names from blogs."""
+        """
+        Get unique category names from existing blogs.
+
+        Extracts distinct 'name' values from active blogs
+        to populate the category dropdown.
+
+        Returns:
+            list: Tuples of (value, label) for select options.
+        """
         from .models import Blog
         # Blog uses `name` field as freeform category (e.g., "Development", "Design").
         # No separate Category model - categories are derived from existing blog posts.

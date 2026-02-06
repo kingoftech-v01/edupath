@@ -10,7 +10,11 @@ from .models import (
 
 
 class FeatureSerializer(serializers.ModelSerializer):
-    """Feature serializer."""
+    """
+    Feature serializer.
+
+    Serializes platform features for homepage display.
+    """
 
     class Meta:
         model = Feature
@@ -18,7 +22,11 @@ class FeatureSerializer(serializers.ModelSerializer):
 
 
 class BusinessPartnerSerializer(serializers.ModelSerializer):
-    """Business partner serializer."""
+    """
+    Business partner serializer.
+
+    Serializes partner logos for carousel display.
+    """
 
     class Meta:
         model = BusinessPartner
@@ -26,7 +34,11 @@ class BusinessPartnerSerializer(serializers.ModelSerializer):
 
 
 class SiteStatisticSerializer(serializers.ModelSerializer):
-    """Site statistic serializer."""
+    """
+    Site statistic serializer.
+
+    Serializes statistics for animated counter display.
+    """
 
     class Meta:
         model = SiteStatistic
@@ -34,7 +46,11 @@ class SiteStatisticSerializer(serializers.ModelSerializer):
 
 
 class PricingPlanSerializer(serializers.ModelSerializer):
-    """Pricing plan serializer."""
+    """
+    Pricing plan serializer.
+
+    Serializes pricing plans including features list and styling.
+    """
 
     class Meta:
         model = PricingPlan
@@ -45,7 +61,11 @@ class PricingPlanSerializer(serializers.ModelSerializer):
 
 
 class ContactInfoSerializer(serializers.ModelSerializer):
-    """Contact info serializer."""
+    """
+    Contact info serializer.
+
+    Serializes contact methods for contact page display.
+    """
 
     class Meta:
         model = ContactInfo
@@ -53,13 +73,28 @@ class ContactInfoSerializer(serializers.ModelSerializer):
 
 
 class ContactSubmissionSerializer(serializers.ModelSerializer):
-    """Contact submission serializer for form submissions."""
+    """
+    Contact submission serializer for form submissions.
+
+    Handles contact form creation with optional user linking.
+    """
 
     class Meta:
         model = ContactSubmission
         fields = ['name', 'email', 'subject', 'message']
 
     def create(self, validated_data):
+        """
+        Create contact submission with optional user link.
+
+        Links submission to authenticated user if available.
+
+        Args:
+            validated_data: Validated form data.
+
+        Returns:
+            ContactSubmission: Created submission instance.
+        """
         # Link submission to user account if logged in, enabling reply/follow-up.
         request = self.context.get('request')
         if request and request.user.is_authenticated:
@@ -68,7 +103,12 @@ class ContactSubmissionSerializer(serializers.ModelSerializer):
 
 
 class SiteConfigurationSerializer(serializers.ModelSerializer):
-    """Site configuration serializer."""
+    """
+    Site configuration serializer.
+
+    Serializes the singleton site configuration. Excludes ID
+    since it's always 1 and adds no value to API consumers.
+    """
 
     class Meta:
         model = SiteConfiguration

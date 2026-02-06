@@ -18,7 +18,24 @@ from .forms import ReviewForm
 # =============================================================================
 
 def course_list(request):
-    """Course list/grid page with optional filtering."""
+    """
+    Course list/grid page with optional filtering.
+
+    Supports filtering by category, search term, and price type.
+    Results are paginated (12 per page for 3-column grid).
+
+    Query params:
+        category: Filter by category slug.
+        search: Search in title and description.
+        price: Filter by 'free' or 'paid'.
+        page: Pagination page number.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered course grid template.
+    """
     courses = Course.objects.filter(is_active=True).select_related('category', 'instructor')
 
     # Filter chain: all filters are optional and can combine.
@@ -53,32 +70,84 @@ def course_list(request):
 
 
 def grid(request):
-    """Course grid listing."""
+    """
+    Course grid listing.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered grid template.
+    """
     return render(request, 'pages/grid.html')
 
 
 def grid_sidebar(request):
-    """Course grid with sidebar."""
+    """
+    Course grid with sidebar layout.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered grid-sidebar template.
+    """
     return render(request, 'pages/grid-sidebar.html')
 
 
 def list_view(request):
-    """Course list view."""
+    """
+    Course list view (rows instead of grid).
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered list template.
+    """
     return render(request, 'pages/list.html')
 
 
 def list_sidebar(request):
-    """Course list with sidebar."""
+    """
+    Course list with sidebar layout.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered list-sidebar template.
+    """
     return render(request, 'pages/list-sidebar.html')
 
 
 def youtube_listing(request):
-    """YouTube video courses."""
+    """
+    YouTube video courses listing.
+
+    Shows courses with YouTube embeds (video_url field).
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered YouTube listing template.
+    """
     return render(request, 'pages/youtube-listing.html')
 
 
 def video_listing(request):
-    """Video courses listing."""
+    """
+    Self-hosted video courses listing.
+
+    Shows courses with uploaded videos (video_file field).
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered video listing template.
+    """
     return render(request, 'pages/video-listing.html')
 
 
@@ -87,7 +156,19 @@ def video_listing(request):
 # =============================================================================
 
 def course_detail(request, slug):
-    """Course detail page by slug."""
+    """
+    Course detail page by slug.
+
+    Displays full course information with related courses and reviews.
+    Shows review form for authenticated users.
+
+    Args:
+        request: The HTTP request object.
+        slug: Course URL slug.
+
+    Returns:
+        HttpResponse: Rendered course detail template.
+    """
     course = get_object_or_404(
         Course.objects.select_related('category', 'instructor'),
         slug=slug,
@@ -111,7 +192,18 @@ def course_detail(request, slug):
 
 
 def course_detail_by_id(request, course_id):
-    """Course detail page by ID (for legacy URLs)."""
+    """
+    Course detail page by ID.
+
+    Maintains backward compatibility with old numeric ID URLs.
+
+    Args:
+        request: The HTTP request object.
+        course_id: Numeric course ID.
+
+    Returns:
+        HttpResponse: Rendered course detail template.
+    """
     course = get_object_or_404(
         Course.objects.select_related('category', 'instructor'),
         id=course_id,
@@ -131,7 +223,18 @@ def course_detail_by_id(request, course_id):
 
 
 def course_detail_two(request, course_id):
-    """Alternative course detail page."""
+    """
+    Alternative course detail page layout.
+
+    Uses a different template design for A/B testing or variety.
+
+    Args:
+        request: The HTTP request object.
+        course_id: Numeric course ID.
+
+    Returns:
+        HttpResponse: Rendered alternative course detail template.
+    """
     course = get_object_or_404(
         Course.objects.select_related('category', 'instructor'),
         id=course_id,
@@ -149,12 +252,33 @@ def course_detail_two(request, course_id):
 # =============================================================================
 
 def instructor_list(request):
-    """Instructor listing page."""
+    """
+    Instructor listing page.
+
+    Shows all active instructors with their profiles.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered instructors template.
+    """
     return render(request, 'pages/instructors.html')
 
 
 def instructor_detail(request, slug):
-    """Instructor detail page."""
+    """
+    Instructor detail page.
+
+    Shows instructor profile and their courses.
+
+    Args:
+        request: The HTTP request object.
+        slug: Instructor URL slug.
+
+    Returns:
+        HttpResponse: Rendered instructor detail template.
+    """
     instructor = get_object_or_404(Instructor, slug=slug, is_active=True)
     courses = instructor.courses.filter(is_active=True)
 
@@ -170,13 +294,34 @@ def instructor_detail(request, slug):
 # =============================================================================
 
 def category_list(request):
-    """Category listing page."""
+    """
+    Category listing page.
+
+    Shows all active categories with their course counts.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered category list template.
+    """
     categories = Category.objects.filter(is_active=True)
     return render(request, 'courses/category_list.html', {'categories': categories})
 
 
 def category_detail(request, slug):
-    """Category detail with courses."""
+    """
+    Category detail page with courses.
+
+    Shows category info and paginated list of courses in that category.
+
+    Args:
+        request: The HTTP request object.
+        slug: Category URL slug.
+
+    Returns:
+        HttpResponse: Rendered category detail template.
+    """
     category = get_object_or_404(Category, slug=slug, is_active=True)
     courses = category.courses.filter(is_active=True)
 
@@ -199,7 +344,18 @@ def category_detail(request, slug):
 # full page reloads. They're called via hx-get/hx-post attributes in templates.
 
 def htmx_course_list(request):
-    """HTMX partial for filtered course listings on homepage."""
+    """
+    HTMX partial for filtered course listings on homepage.
+
+    Returns HTML fragment for HTMX swap without full page reload.
+    Supports category and search filtering.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Rendered course list partial (max 12 courses).
+    """
     courses = Course.objects.filter(is_active=True).select_related('category', 'instructor')
 
     category = request.GET.get('category')
@@ -221,7 +377,19 @@ def htmx_course_list(request):
 @login_required
 @require_POST
 def htmx_submit_review(request, course_id):
-    """HTMX endpoint for submitting reviews without page reload."""
+    """
+    HTMX endpoint for submitting reviews without page reload.
+
+    Creates a new review for the specified course.
+    Auto-populates user and name from authenticated session.
+
+    Args:
+        request: The HTTP request object (POST only).
+        course_id: Numeric course ID.
+
+    Returns:
+        JsonResponse: Success message or validation errors.
+    """
     course = get_object_or_404(Course, id=course_id)
     form = ReviewForm(request.POST)
 

@@ -7,7 +7,11 @@ from .models import Blog
 
 
 class BlogListSerializer(serializers.ModelSerializer):
-    """Blog serializer for listings."""
+    """
+    Blog serializer for listings.
+
+    Includes author name and minimal fields for card displays.
+    """
     author_name = serializers.CharField(source='author.name', read_only=True)
 
     class Meta:
@@ -19,7 +23,11 @@ class BlogListSerializer(serializers.ModelSerializer):
 
 
 class BlogDetailSerializer(serializers.ModelSerializer):
-    """Blog serializer with full details."""
+    """
+    Blog serializer with full details.
+
+    Includes content, author info, and timestamps for detail pages.
+    """
     author_name = serializers.CharField(source='author.name', read_only=True)
     author_title = serializers.CharField(source='author.title', read_only=True)
 

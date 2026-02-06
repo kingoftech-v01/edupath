@@ -8,7 +8,12 @@ from .models import UserProfile
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    """Serializer for UserProfile model."""
+    """
+    Serializer for UserProfile model.
+
+    Includes user fields (username, email, names) as read-only nested data.
+    Profile fields (bio, phone, social links) are editable.
+    """
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
     first_name = serializers.CharField(source='user.first_name', read_only=True)
@@ -27,7 +32,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for User model with profile."""
+    """
+    Serializer for User model with nested profile.
+
+    Read-only serializer that includes the full UserProfile as nested data.
+    Used for current user endpoint and authentication responses.
+    """
     profile = UserProfileSerializer(read_only=True)
     full_name = serializers.SerializerMethodField()
 
@@ -37,5 +47,14 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'username']
 
     def get_full_name(self, obj):
+        """
+        Compute user's full name from first and last name.
+
+        Args:
+            obj: User instance being serialized.
+
+        Returns:
+            str: Full name or username as fallback.
+        """
         name = f"{obj.first_name} {obj.last_name}".strip()
         return name or obj.username

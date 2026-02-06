@@ -11,7 +11,11 @@ from .models import Category, Instructor, Course, Review
 # =============================================================================
 
 class CategoryListSerializer(serializers.ModelSerializer):
-    """Category serializer for listings."""
+    """
+    Category serializer for listings.
+
+    Includes course count and formatted title for UI display.
+    """
     course_count = serializers.IntegerField(read_only=True)
     title = serializers.CharField(read_only=True)
 
@@ -21,7 +25,11 @@ class CategoryListSerializer(serializers.ModelSerializer):
 
 
 class CategoryDetailSerializer(serializers.ModelSerializer):
-    """Category serializer with full details."""
+    """
+    Category serializer with full details.
+
+    Includes description and timestamp for detail views.
+    """
     course_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -34,7 +42,11 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
 # =============================================================================
 
 class InstructorListSerializer(serializers.ModelSerializer):
-    """Instructor serializer for listings."""
+    """
+    Instructor serializer for listings.
+
+    Minimal fields for card/grid displays.
+    """
 
     class Meta:
         model = Instructor
@@ -42,7 +54,11 @@ class InstructorListSerializer(serializers.ModelSerializer):
 
 
 class InstructorDetailSerializer(serializers.ModelSerializer):
-    """Instructor serializer with full details."""
+    """
+    Instructor serializer with full details.
+
+    Includes bio, social links, and course count for profile pages.
+    """
     course_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -54,6 +70,15 @@ class InstructorDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_course_count(self, obj):
+        """
+        Count active courses by this instructor.
+
+        Args:
+            obj: Instructor instance.
+
+        Returns:
+            int: Number of active courses.
+        """
         return obj.courses.filter(is_active=True).count()
 
 
@@ -62,7 +87,11 @@ class InstructorDetailSerializer(serializers.ModelSerializer):
 # =============================================================================
 
 class CourseListSerializer(serializers.ModelSerializer):
-    """Course serializer for listings."""
+    """
+    Course serializer for listings.
+
+    Includes nested category/instructor and formatted fields for cards.
+    """
     category = CategoryListSerializer(read_only=True)
     instructor = InstructorListSerializer(read_only=True)
     formatted_price = serializers.CharField(read_only=True)
@@ -79,13 +108,26 @@ class CourseListSerializer(serializers.ModelSerializer):
         ]
 
     def get_src(self, obj):
+        """
+        Get video file URL if exists.
+
+        Args:
+            obj: Course instance.
+
+        Returns:
+            str: Video file URL or empty string.
+        """
         if obj.video_file:
             return obj.video_file.url
         return ""
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
-    """Course serializer with full details."""
+    """
+    Course serializer with full details.
+
+    Includes full nested objects and recent reviews for detail pages.
+    """
     category = CategoryDetailSerializer(read_only=True)
     instructor = InstructorDetailSerializer(read_only=True)
     reviews = serializers.SerializerMethodField()
@@ -102,6 +144,17 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_reviews(self, obj):
+        """
+        Get recent reviews for this course.
+
+        Limited to 5 for performance. Full list via reviews API.
+
+        Args:
+            obj: Course instance.
+
+        Returns:
+            list: Serialized review data.
+        """
         # Limit to 5 reviews for performance; full list available via reviews API.
         # is_active=True excludes soft-deleted or moderated reviews.
         reviews = obj.reviews.filter(is_active=True)[:5]
@@ -109,7 +162,11 @@ class CourseDetailSerializer(serializers.ModelSerializer):
 
 
 class CourseCreateUpdateSerializer(serializers.ModelSerializer):
-    """Course serializer for create/update operations."""
+    """
+    Course serializer for create/update operations.
+
+    Admin-only. Allows setting relationships and all editable fields.
+    """
 
     class Meta:
         model = Course
@@ -128,7 +185,11 @@ class CourseCreateUpdateSerializer(serializers.ModelSerializer):
 # =============================================================================
 
 class ReviewSerializer(serializers.ModelSerializer):
-    """Review serializer for display."""
+    """
+    Review serializer for display.
+
+    Read-only serializer for showing reviews in UI.
+    """
 
     class Meta:
         model = Review
@@ -136,13 +197,28 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class ReviewCreateSerializer(serializers.ModelSerializer):
-    """Review serializer for creation."""
+    """
+    Review serializer for creation.
+
+    Auto-populates user and name from request context.
+    """
 
     class Meta:
         model = Review
         fields = ['course', 'desc', 'rating']
 
     def create(self, validated_data):
+        """
+        Create review with auto-populated user data.
+
+        Sets user and name from request context to prevent spoofing.
+
+        Args:
+            validated_data: Validated form data.
+
+        Returns:
+            Review: Created review instance.
+        """
         # Auto-populate user and name from authenticated request to prevent spoofing.
         # Users can't claim to be someone else when leaving reviews.
         request = self.context.get('request')

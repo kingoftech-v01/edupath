@@ -21,7 +21,13 @@ TEXTAREA_CLASSES = (
 
 
 class UserProfileForm(forms.ModelForm):
-    """Form for editing user profile."""
+    """
+    Form for editing user profile.
+
+    Includes User model fields (first_name, last_name) alongside
+    UserProfile fields. The view handles saving to both models.
+    Styled with Tailwind CSS classes for consistent UI.
+    """
     first_name = forms.CharField(
         max_length=30,
         required=False,
