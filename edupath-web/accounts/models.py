@@ -50,7 +50,10 @@ class UserProfile(models.Model):
         return name or self.user.username
 
 
-# Signal to create profile when user is created
+# Two separate signals handle profile lifecycle: one for creation, one for cascading saves.
+# This separation ensures profiles are created atomically with users while still allowing
+# profile updates to cascade when User model fields change (e.g., updating first_name).
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     """Create a UserProfile when a new User is created."""
@@ -61,5 +64,8 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     """Save UserProfile when User is saved."""
+    # hasattr check prevents AttributeError during the brief moment between User creation
+    # and profile creation (the create_user_profile signal runs first, but Django's signal
+    # ordering isn't guaranteed across different signal handlers).
     if hasattr(instance, 'profile'):
         instance.profile.save()

@@ -66,6 +66,8 @@ class Category(TimestampedModel, OrderedModel):
     def title(self):
         """For template compatibility."""
         count = self.course_count
+        # "10+ Courses" fallback for empty categories maintains visual consistency
+        # on the homepage grid where all category cards need similar formatting.
         return f"{count}+ Courses" if count > 0 else "10+ Courses"
 
 
@@ -162,7 +164,11 @@ class Course(TimestampedModel, OrderedModel):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+        # Derive is_free from price on every save to keep them in sync.
+        # Using save() rather than a property ensures database queries can filter on is_free.
         self.is_free = self.price == 0
+        # Auto-populate instructor display name for templates that expect course.name
+        # without needing to traverse the instructor relationship.
         if not self.name and self.instructor:
             self.name = self.instructor.name
         super().save(*args, **kwargs)

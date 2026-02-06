@@ -18,10 +18,11 @@ from .forms import ReviewForm
 # =============================================================================
 
 def course_list(request):
-    """Course list/grid page."""
+    """Course list/grid page with optional filtering."""
     courses = Course.objects.filter(is_active=True).select_related('category', 'instructor')
 
-    # Apply filters
+    # Filter chain: all filters are optional and can combine.
+    # URL examples: ?category=web-dev&price=free&search=python
     category = request.GET.get('category')
     if category:
         courses = courses.filter(category__slug=category)
@@ -39,7 +40,7 @@ def course_list(request):
     elif price_filter == 'paid':
         courses = courses.filter(is_free=False)
 
-    # Pagination
+    # 12 per page fits the 3-column grid layout (4 rows).
     paginator = Paginator(courses, 12)
     page = request.GET.get('page', 1)
     courses_page = paginator.get_page(page)
@@ -194,9 +195,11 @@ def category_detail(request, slug):
 # =============================================================================
 # HTMX VIEWS
 # =============================================================================
+# These views return HTML partials for HTMX-powered dynamic updates without
+# full page reloads. They're called via hx-get/hx-post attributes in templates.
 
 def htmx_course_list(request):
-    """HTMX partial for filtered course listings."""
+    """HTMX partial for filtered course listings on homepage."""
     courses = Course.objects.filter(is_active=True).select_related('category', 'instructor')
 
     category = request.GET.get('category')
@@ -210,6 +213,7 @@ def htmx_course_list(request):
             Q(desc__icontains=search)
         )
 
+    # Limit 12 matches homepage course grid; no pagination for partial refresh.
     context = {'courses': courses[:12]}
     return render(request, 'Components/home/courses.html', context)
 
@@ -217,12 +221,13 @@ def htmx_course_list(request):
 @login_required
 @require_POST
 def htmx_submit_review(request, course_id):
-    """HTMX endpoint for submitting reviews."""
+    """HTMX endpoint for submitting reviews without page reload."""
     course = get_object_or_404(Course, id=course_id)
     form = ReviewForm(request.POST)
 
     if form.is_valid():
         review = form.save(commit=False)
+        # Auto-set course from URL and user from session - prevents tampering.
         review.course = course
         review.user = request.user
         review.name = request.user.get_full_name() or request.user.username

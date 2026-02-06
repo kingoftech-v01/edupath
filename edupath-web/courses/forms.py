@@ -71,5 +71,7 @@ class CourseSearchForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Populate categories dynamically to always show current DB state.
+        # Using slug as value for URL-friendly filtering (?category=web-dev).
         categories = Category.objects.filter(is_active=True).values_list('slug', 'name')
         self.fields['category'].choices = [('', 'All Categories')] + list(categories)

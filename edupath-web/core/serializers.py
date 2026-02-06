@@ -60,6 +60,7 @@ class ContactSubmissionSerializer(serializers.ModelSerializer):
         fields = ['name', 'email', 'subject', 'message']
 
     def create(self, validated_data):
+        # Link submission to user account if logged in, enabling reply/follow-up.
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             validated_data['user'] = request.user
@@ -71,4 +72,5 @@ class SiteConfigurationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SiteConfiguration
+        # Exclude id since it's always 1 (singleton) and adds no value to API consumers.
         exclude = ['id']

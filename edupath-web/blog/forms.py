@@ -46,6 +46,8 @@ class BlogSearchForm(forms.Form):
     def _get_category_choices(self):
         """Get unique category names from blogs."""
         from .models import Blog
+        # Blog uses `name` field as freeform category (e.g., "Development", "Design").
+        # No separate Category model - categories are derived from existing blog posts.
         categories = Blog.objects.filter(
             is_active=True
         ).values_list('name', flat=True).distinct()

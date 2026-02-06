@@ -102,6 +102,8 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_reviews(self, obj):
+        # Limit to 5 reviews for performance; full list available via reviews API.
+        # is_active=True excludes soft-deleted or moderated reviews.
         reviews = obj.reviews.filter(is_active=True)[:5]
         return ReviewSerializer(reviews, many=True).data
 
@@ -141,6 +143,8 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         fields = ['course', 'desc', 'rating']
 
     def create(self, validated_data):
+        # Auto-populate user and name from authenticated request to prevent spoofing.
+        # Users can't claim to be someone else when leaving reviews.
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             validated_data['user'] = request.user

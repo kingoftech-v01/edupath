@@ -115,6 +115,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     ordering = ['order', '-created_at']
 
     def get_queryset(self):
+        # select_related prevents N+1 queries when serializing nested category/instructor.
         return Course.objects.filter(is_active=True).select_related('category', 'instructor')
 
     def get_serializer_class(self):
@@ -145,8 +146,9 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def related(self, request, slug=None):
-        """Get related courses."""
+        """Get related courses (same category, excluding current)."""
         course = self.get_object()
+        # "Related" = same category. Limit to 4 for sidebar display on course detail page.
         related = Course.objects.filter(
             category=course.category,
             is_active=True
@@ -178,6 +180,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return ReviewSerializer
 
     def get_permissions(self):
+        # Reviews are public read, require login to create (prevents spam),
+        # and only admins can modify/delete (moderation control).
         if self.action == 'create':
             return [permissions.IsAuthenticated()]
         if self.action in ['update', 'partial_update', 'destroy']:

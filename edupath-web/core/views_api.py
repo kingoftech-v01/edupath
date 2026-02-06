@@ -112,11 +112,13 @@ class HomepageDataAPIView(APIView):
 
     GET /core/api/v1/homepage/
 
-    Returns all data needed for the homepage in a single request.
+    Returns all data needed for the homepage in a single request,
+    reducing HTTP roundtrips for mobile/SPA clients.
     """
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
+        # Imports inside method to avoid circular imports between core and other apps.
         from courses.models import Category, Course, Instructor
         from courses.serializers import CategoryListSerializer, CourseListSerializer, InstructorListSerializer
         from courses.models import Review
@@ -124,6 +126,8 @@ class HomepageDataAPIView(APIView):
         from blog.models import Blog
         from blog.serializers import BlogListSerializer
 
+        # Limits match homepage layout: 6 featured courses (2 rows of 3),
+        # 8 instructors (carousel), 3 blogs (sidebar), 6 reviews (testimonials).
         data = {
             'features': FeatureSerializer(
                 Feature.objects.filter(is_active=True), many=True

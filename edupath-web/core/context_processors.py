@@ -54,6 +54,7 @@ def site_config(request):
             'copyright_year': config.copyright_text or '2024',
         }
     except Exception:
+        # Fallback ensures templates render even if DB is unreachable or migrations pending.
         return {
             'site_name': 'EduPath',
             'site_config': None,
@@ -62,10 +63,11 @@ def site_config(request):
 
 
 def global_courses(request):
-    """Courses from database with selected course handling."""
+    """Courses from database with optional selected course for highlighting."""
     from courses.models import Course
     courses = Course.objects.filter(is_active=True).select_related('category', 'instructor')
 
+    # Templates can pass ?course_id=X to highlight a specific course in listings.
     course_id = request.GET.get('course_id')
     selected_course = None
 
@@ -74,6 +76,7 @@ def global_courses(request):
             course_id = int(course_id)
             selected_course = courses.filter(id=course_id).first()
         except (TypeError, ValueError):
+            # Silently ignore invalid IDs - just won't highlight any course.
             selected_course = None
 
     return {'courses': courses, 'selected_course': selected_course}
@@ -89,6 +92,8 @@ def global_instructors(request):
 def global_categories(request):
     """Categories from database with course counts."""
     from courses.models import Category
+    # Annotate counts in DB to avoid N+1 queries. Only count active courses,
+    # not soft-deleted ones, so UI shows accurate "X courses" labels.
     categories = Category.objects.filter(is_active=True).annotate(
         course_count=Count('courses', filter=Q(courses__is_active=True))
     )
@@ -121,8 +126,10 @@ def global_blogs(request):
 
 
 def global_courses1(request):
-    """YouTube video courses from database."""
+    """Courses with YouTube embeds (video_url field)."""
     from courses.models import Course
+    # courses1 = YouTube embeds, courses2 = self-hosted videos.
+    # Split allows templates to use different players for each type.
     courses1 = Course.objects.filter(
         is_active=True,
     ).exclude(video_url='').exclude(video_url__isnull=True).select_related('instructor')
@@ -130,7 +137,7 @@ def global_courses1(request):
 
 
 def global_courses2(request):
-    """Local video courses from database."""
+    """Courses with self-hosted videos (video_file field)."""
     from courses.models import Course
     courses2 = Course.objects.filter(
         is_active=True,

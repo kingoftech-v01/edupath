@@ -20,7 +20,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Starting data migration...\n')
 
-        # Create data in order of dependencies
+        # Order matters: courses need categories + instructors, blogs need instructors.
+        # All methods use get_or_create so this command is idempotent.
         self.create_site_config()
         self.create_features()
         self.create_business_partners()

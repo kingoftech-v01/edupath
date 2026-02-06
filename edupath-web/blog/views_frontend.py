@@ -21,10 +21,12 @@ def blog_sidebar(request):
 def blog_detail(request, slug):
     """Blog detail page by slug."""
     blog = get_object_or_404(Blog, slug=slug, is_active=True)
+    # Show recent posts in sidebar, excluding current to avoid redundancy.
     recent_blogs = Blog.objects.filter(is_active=True).exclude(pk=blog.pk)[:5]
 
     context = {
         'blog': blog,
+        # selected_blog used by context processor to highlight current in nav.
         'selected_blog': blog,
         'recent_blogs': recent_blogs,
     }
@@ -32,7 +34,7 @@ def blog_detail(request, slug):
 
 
 def blog_detail_by_id(request, blog_id):
-    """Blog detail page by ID (for legacy URLs)."""
+    """Blog detail page by ID - maintains backward compatibility with old URLs."""
     blog = get_object_or_404(Blog, id=blog_id, is_active=True)
     recent_blogs = Blog.objects.filter(is_active=True).exclude(pk=blog.pk)[:5]
 

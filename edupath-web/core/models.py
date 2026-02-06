@@ -169,7 +169,12 @@ class ContactSubmission(TimestampedModel):
 # =============================================================================
 
 class SiteConfiguration(models.Model):
-    """Site-wide configuration (singleton pattern)."""
+    """
+    Site-wide configuration using a singleton pattern.
+
+    Only one instance (pk=1) can exist. Use SiteConfiguration.get_solo() to retrieve it.
+    This simplifies admin UI and avoids accidental multiple configs.
+    """
     site_name = models.CharField(max_length=255, default="EduPath")
     tagline = models.CharField(max_length=255, blank=True)
     logo = models.ImageField(upload_to='site/', blank=True)
@@ -199,11 +204,13 @@ class SiteConfiguration(models.Model):
         verbose_name_plural = "Site Configuration"
 
     def save(self, *args, **kwargs):
+        # Force pk=1 to enforce singleton - any save overwrites the single instance.
         self.pk = 1
         super().save(*args, **kwargs)
 
     @classmethod
     def get_solo(cls):
+        """Always use this to get config; creates with defaults if none exists."""
         obj, created = cls.objects.get_or_create(pk=1)
         return obj
 

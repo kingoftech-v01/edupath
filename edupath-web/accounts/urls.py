@@ -60,6 +60,6 @@ urlpatterns = [
     # Frontend URLs: /accounts/
     path('', include(frontend_urlpatterns)),
 
-    # Allauth URLs
+    # Allauth URLs last - our custom views above take precedence for login/signup/etc.
     path('', include('allauth.urls')),
 ]
