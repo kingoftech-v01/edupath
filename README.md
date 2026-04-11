@@ -6,39 +6,44 @@ Multi-platform educational platform for online learning.
 
 | Project | Description | Technologies | Status |
 |---------|-------------|--------------|--------|
-| [edupath-web](./edupath-web) | Web application | Django, DRF, Tailwind | Active |
-| [edupath-desktop](./edupath-desktop) | Windows desktop app | Tauri, Rust, TypeScript | Planned |
-| [edupath-mobile](./edupath-mobile) | Android mobile app | Kotlin, Jetpack Compose | Planned |
+| [edupath-web](./edupath-web) | Web application | Django + DRF, Tailwind | Active |
+| [edupath-desktop](./edupath-desktop) | Cross-platform desktop client | **Python + PyQt6**, SQLAlchemy, httpx, Pydantic | Active |
+| [edupath-android](./edupath-android) | Android mobile client | Kotlin, Gradle KTS | In progress |
+| [edupath-ios](./edupath-ios) | iOS mobile client | Swift + SwiftUI (planned) | Placeholder |
 
 ## Structure
 
 ```
 edupath/
-├── API_SPECIFICATION.md        # Shared API documentation
+├── API_SPECIFICATION.md        # Shared API documentation for all clients
 │
 ├── edupath-web/                # Web application (Django)
+│   ├── Edupath/                # Django project settings
+│   ├── App/                    # Main app
 │   ├── accounts/               # User authentication
 │   ├── courses/                # Course management
 │   ├── blog/                   # Blog posts
 │   ├── core/                   # Site configuration
-│   ├── Edupath/                # Django settings
-│   ├── CONVENTIONS.md          # Development conventions
-│   ├── SECURITY.md             # Security guidelines
-│   └── SCALABILITY.md          # Scaling patterns
+│   ├── data/                   # Fixtures / seed data
+│   ├── static/, templates/, theme/
+│   └── tests/
 │
-├── edupath-desktop/            # Desktop application (Windows)
-│   ├── src/                    # Frontend (TypeScript/React)
-│   ├── src-tauri/              # Backend (Rust)
-│   ├── CONVENTIONS.md          # Development conventions
-│   ├── SECURITY.md             # Security guidelines
-│   └── TECHNOLOGY_DECISION.md  # Tech stack comparison
+├── edupath-desktop/            # Desktop client (Python + PyQt6)
+│   ├── src/                    # Application source
+│   ├── tests/                  # Test suite
+│   ├── requirements.txt        # PyQt6, SQLAlchemy, httpx, Pydantic, aiosqlite
+│   ├── CONVENTIONS.md
+│   ├── SECURITY.md
+│   └── TECHNOLOGY_DECISION.md
 │
-└── edupath-mobile/             # Mobile application (Android)
-    ├── app/                    # Application module
-    ├── CONVENTIONS.md          # Development conventions
-    ├── SECURITY.md             # Security guidelines
-    ├── ARCHITECTURE.md         # MVVM architecture guide
-    └── TESTING.md              # Testing conventions
+├── edupath-android/            # Android client (Kotlin, Gradle KTS)
+│   ├── app/                    # Application module
+│   ├── build.gradle.kts
+│   ├── settings.gradle.kts
+│   └── gradle/
+│
+└── edupath-ios/                # iOS client (placeholder)
+    └── README.md               # Planned stack: Swift 5.9+, SwiftUI, MVVM + Clean Architecture
 ```
 
 ## Documentation
@@ -58,24 +63,26 @@ edupath/
 | [SCALABILITY.md](./edupath-web/SCALABILITY.md) | Performance and scaling patterns |
 | [README.md](./edupath-web/README.md) | Setup and development guide |
 
-### Desktop (Tauri)
+### Desktop (Python + PyQt6)
 
 | Document | Description |
 |----------|-------------|
 | [CONVENTIONS.md](./edupath-desktop/CONVENTIONS.md) | Development standards |
 | [SECURITY.md](./edupath-desktop/SECURITY.md) | Desktop security guidelines |
-| [TECHNOLOGY_DECISION.md](./edupath-desktop/TECHNOLOGY_DECISION.md) | Technology comparison |
+| [TECHNOLOGY_DECISION.md](./edupath-desktop/TECHNOLOGY_DECISION.md) | Why PyQt6 was chosen |
 | [README.md](./edupath-desktop/README.md) | Setup and development guide |
 
-### Mobile (Kotlin/Android)
+### Android (Kotlin)
 
 | Document | Description |
 |----------|-------------|
-| [CONVENTIONS.md](./edupath-mobile/CONVENTIONS.md) | Kotlin/Android standards |
-| [SECURITY.md](./edupath-mobile/SECURITY.md) | Android security guidelines |
-| [ARCHITECTURE.md](./edupath-mobile/ARCHITECTURE.md) | MVVM + Clean Architecture |
-| [TESTING.md](./edupath-mobile/TESTING.md) | Testing conventions |
-| [README.md](./edupath-mobile/README.md) | Setup and development guide |
+| [README.md](./edupath-android/README.md) | Setup and build guide |
+
+### iOS (planned, placeholder)
+
+| Document | Description |
+|----------|-------------|
+| [README.md](./edupath-ios/README.md) | Planned stack and roadmap |
 
 ## Quick Start
 
@@ -93,36 +100,43 @@ python manage.py runserver
 
 Access at http://localhost:8000
 
-### Desktop Application
+### Desktop Application (PyQt6)
 
 ```bash
 cd edupath-desktop
-npm install
-npm run tauri dev
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python -m src                   # or: python src/main.py
 ```
 
-### Mobile Application
+### Android Application (Kotlin)
 
 ```bash
-cd edupath-mobile
+cd edupath-android
 ./gradlew assembleDebug
+# APK at: app/build/outputs/apk/debug/app-debug.apk
 ```
+
+### iOS Application
+
+The `edupath-ios/` directory is currently a placeholder. See its [README](./edupath-ios/README.md) for the planned Swift / SwiftUI stack.
 
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         CLIENTS                                  │
-├─────────────────┬─────────────────┬─────────────────────────────┤
-│   Web (Django)  │ Desktop (Tauri) │    Mobile (Kotlin)          │
-│   - SSR Views   │ - Rust Backend  │    - MVVM Architecture      │
-│   - REST API    │ - React Frontend│    - Jetpack Compose        │
-│   - Tailwind    │ - TypeScript    │    - Retrofit               │
-└────────┬────────┴────────┬────────┴────────────┬────────────────┘
-         │                 │                      │
-         └─────────────────┼──────────────────────┘
-                           │
-                           ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                            CLIENTS                                   │
+├──────────────┬──────────────────┬──────────────────┬────────────────┤
+│  Web (Django)│ Desktop (PyQt6)  │  Android (Kotlin)│  iOS (planned) │
+│  - SSR Views │ - Python 3.10+   │  - Gradle KTS    │  - SwiftUI     │
+│  - REST API  │ - SQLAlchemy     │  - MVVM          │  - MVVM + Clean│
+│  - Tailwind  │ - httpx + Pydantic│  - (Compose)    │  - Swift 5.9+  │
+└──────┬───────┴────────┬─────────┴─────────┬────────┴───────┬────────┘
+       │                │                    │                │
+       └────────────────┴────────────────────┴────────────────┘
+                                │
+                                ▼
          ┌─────────────────────────────────────┐
          │            REST API                  │
          │     (Django REST Framework)          │
